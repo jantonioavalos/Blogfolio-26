@@ -8,6 +8,6 @@ import { defineConfig } from 'astro/config';
 //     site: 'https://antonioavalos.com',     base: '/'
 // Wrong `base` = broken CSS + 404 links. Default below = scenario A.
 export default defineConfig({
-  site: 'https://your-username.github.io',
-  base: '/blogfolio/',
+  site: 'https://jantonioavalos.github.io',
+  base: '/Blogfolio-26/',
 });
