@@ -64,11 +64,13 @@ Talks live in `src/config/site.ts` (`TALKS`) — they're data, not pages (v1).
 
 ## Deploying
 
-1. **Set the path** in `astro.config.mjs` — scenario A (project page, default) or B (custom domain `antonioavalos.com`, `base: '/'`). Wrong `base` = broken CSS.
-2. Push to a new GitHub repo (`main` branch).
-3. Repo **Settings → Pages → Source → GitHub Actions**.
-4. Watch the **Actions** tab; the live URL appears in the deploy summary.
-5. **Custom domain later:** switch to scenario B, add the domain in Settings → Pages, point DNS — do this deliberately so it doesn't collide with the live Ghost DNS.
+1. Push to a new GitHub repo (`main` branch). Note: GitHub Pages serves static files. Astro's build produces a static dist/ folder. So deployment = build on every push, then publish dist/ to Pages. The clean way is a GitHub Actions workflow (Astro publishes an official one). You do not commit dist/ — the Action builds it for you.
+2. Repo **Settings → Pages → Source → GitHub Actions**.
+3. **Set the path** in `astro.config.mjs` — scenario A (project page, default) or B (custom domain `antonioavalos.com`, `base: '/'`). Wrong `base` = broken CSS.
+4. **Custom domain later:** switch to scenario B, add the domain in Settings → Pages, point DNS — do this deliberately so it doesn't collide with the live Ghost DNS.
+5. You'd create .github/workflows/deploy.yml. Astro's official version does: checkout → install → astro build → upload dist/ → deploy to Pages. The canonical file is documented here: https://docs.astro.build/en/guides/deploy/github/
+6. Sync repo. Every time main is updated it will deploy.
+7. Optional: Install the Github actions extension in your VSCode.
 
 ## Architecture notes (for future-you)
 
