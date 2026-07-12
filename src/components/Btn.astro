@@ -1,0 +1,28 @@
+---
+// A2/Button — solid azul / ghost / the ONE cherry accent per page. 44px target.
+interface Props { href: string; variant?: 'solid'|'ghost'|'accent'; external?: boolean; small?: boolean }
+const { href, variant = 'solid', external = false, small = false } = Astro.props;
+const base = import.meta.env.BASE_URL;
+const url = external ? href : (href.startsWith('#') ? href : base + href.replace(/^\//, ''));
+---
+<a class:list={['btn', variant, { small }]} href={url}
+   target={external ? '_blank' : undefined} rel={external ? 'noopener' : undefined}>
+  <slot />{external ? ' ⧉' : ''}
+</a>
+<style lang="scss">
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    min-height: 44px; padding: 10px 26px;
+    border-radius: var(--radius-action);
+    font-family: var(--font-sans); font-weight: 600; font-size: var(--text-ui);
+    transition: background .15s ease, color .15s ease;
+    &.solid { background: var(--brand); color: var(--text-on-brand);
+      &:hover { background: var(--accent); color: #fff; } }
+    &.ghost { background: transparent; color: var(--brand); border: 1.5px solid var(--border);
+      &:hover { border-color: var(--brand); } }
+    &.accent { background: var(--accent); color: #fff;
+      &:hover { background: var(--brand); } }
+    &.small { min-height: 38px; padding: 8px 20px; font-size: var(--text-ui-sm); }
+    &:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
+  }
+</style>

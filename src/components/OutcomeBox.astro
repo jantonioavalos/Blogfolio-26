@@ -1,0 +1,17 @@
+---
+// M8/OutcomeBox — solid-azul outcome stack in the sticky rail. Required on case studies.
+import Eyebrow from './Eyebrow.astro';
+import Stat from './Stat.astro';
+interface Props { outcomes: { value: string; caption: string }[] }
+const { outcomes } = Astro.props;
+---
+<aside class="outbox">
+  <Eyebrow onBrand>Outcome</Eyebrow>
+  <div class="stack">
+    {outcomes.map((o) => <Stat value={o.value} caption={o.caption} onBrand rule={false} />)}
+  </div>
+</aside>
+<style lang="scss">
+  .outbox { background: var(--surface-brand); border-radius: var(--radius-card); padding: 20px 22px;
+    .stack { display: flex; flex-direction: column; gap: 16px; margin-top: 14px; } }
+</style>

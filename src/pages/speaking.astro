@@ -1,0 +1,37 @@
+---
+// SPEAKING — per Speaking.dc.html: surface-1 field · tight hero · cherry invite link · auto-fit talk grid.
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SiteHeader from '../components/SiteHeader.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import Hero from '../components/Hero.astro';
+import TextLink from '../components/TextLink.astro';
+import ContentCard from '../components/ContentCard.astro';
+import { TALKS, SITE } from '../config/site';
+---
+<BaseLayout title="Speaking — Antonio Ávalos">
+  <div id="top" class="field">
+    <div class="onpage"><SiteHeader current="Speaking" /></div>
+    <div class="heropad">
+      <Hero tight title="Talks, in two languages." accentWord="two"
+        subtitle="13 sessions on product, design systems and second brains — ES & EN." />
+    </div>
+    <div class="invite">
+      Want one at your event?
+      <TextLink external href={SITE.linkedin}>Ping me on LinkedIn</TextLink>
+    </div>
+    <div class="grid">
+      {TALKS.map((t) => (
+        <ContentCard type="talk" title={t.title} coverHeight={220} meta={t.meta} chips={t.chips} />
+      ))}
+    </div>
+    <div class="onpage"><SiteFooter /></div>
+  </div>
+</BaseLayout>
+<style lang="scss">
+  .field { background: var(--surface-1); }
+  .onpage { background: var(--surface-page); }
+  .heropad { max-width: 840px; }
+  .invite { padding: 6px var(--gutter-page) 8px; font-size: 18px; color: var(--text-secondary); }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 24px; padding: 26px var(--gutter-page) 48px; }
+</style>

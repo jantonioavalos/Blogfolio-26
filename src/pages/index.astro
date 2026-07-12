@@ -1,0 +1,56 @@
+---
+// HOME — per Home.dc.html: header · mini-hero · Working sneakpeak · Speaking sneakpeak ·
+// SectionsRail · Mentoring/Thinking promos · footer.
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SiteHeader from '../components/SiteHeader.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import Hero from '../components/Hero.astro';
+import SectionSneakpeak from '../components/SectionSneakpeak.astro';
+import SectionsRail from '../components/SectionsRail.astro';
+import PromoCard from '../components/PromoCard.astro';
+import { getCollection } from 'astro:content';
+import { TALKS, RAIL, PROMOS, SITE } from '../config/site';
+
+const posts = (await getCollection('posts'))
+  .filter((p) => !p.data.draft && !p.data.private && p.data.type === 'Case Study')
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+const readTime = (body: string) => Math.max(1, Math.round(body.trim().split(/\s+/).length / 200));
+const fmt = (d: Date) => d.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+
+const workingItems = posts.slice(0, 3).map((p) => ({
+  title: p.data.title,
+  tag: p.data.tags[0],
+  description: p.data.description,
+  href: `/work/${p.id.replace(/^work\//, '').replace(/\.md$/, '')}/`,
+  meta: [fmt(p.data.date), `${readTime(p.body ?? '')} min`],
+  cover: p.data.cover,
+}));
+
+const speakingItems = TALKS.slice(0, 3).map((t) => ({
+  title: t.title, type: 'talk' as const, href: '/speaking/', meta: t.meta,
+}));
+---
+<BaseLayout>
+  <div id="top">
+    <SiteHeader current="" />
+    <Hero
+      mini
+      title="Product manager building measurable things."
+      accentWord="measurable"
+      subtitle="Working, speaking and mentoring across product, design systems and second brains — in two languages."
+    />
+    <SectionSneakpeak title="Working" blurb="Case studies with the outcomes up front." href="/working/" items={workingItems} coffee />
+    <SectionSneakpeak title="Speaking" blurb="Recent talks — ES & EN." href="/speaking/" items={speakingItems} />
+    <SectionsRail label={RAIL.label} items={RAIL.items} />
+    <div class="promos">
+      <PromoCard {...PROMOS.mentoring} />
+      <PromoCard {...PROMOS.thinking} />
+    </div>
+    <SiteFooter />
+  </div>
+</BaseLayout>
+<style lang="scss">
+  .promos { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 22px; padding: 32px var(--gutter-page) 40px; }
+</style>

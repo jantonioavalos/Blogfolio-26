@@ -1,0 +1,21 @@
+---
+// M9/NextCaseCard — the single deliberate forward path at article end.
+interface Props { title: string; href: string }
+const { title, href } = Astro.props;
+const base = import.meta.env.BASE_URL;
+---
+<a class="nextcase" href={base + href.replace(/^\//, '')}>
+  <span class="k">Next case</span>
+  <span class="t">{title} →</span>
+</a>
+<style lang="scss">
+  .nextcase { display: flex; flex-direction: column; gap: 6px;
+    background: var(--surface-card); border: 1px solid var(--border);
+    border-radius: var(--radius-card); padding: 22px 26px; box-shadow: var(--shadow-card-sm);
+    .k { font-weight: 600; font-size: var(--text-eyebrow); letter-spacing: .14em;
+      text-transform: uppercase; color: var(--brand-soft); }
+    .t { font-weight: var(--weight-bold); font-size: 21px; color: var(--text-heading); }
+    &:hover { box-shadow: var(--shadow-card-hover);
+      .t { color: var(--accent); } }
+  }
+</style>

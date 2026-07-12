@@ -1,0 +1,27 @@
+// src/styles/global.scss — single global entry, imported once in BaseLayout.
+// Design System v1.1: tokens are the source of truth. colors.scss is imported
+// directly (Astro compiles SCSS at build — no separate compile step needed).
+// Fonts load via @font-face generated in BaseLayout (base-path aware).
+
+@use './tokens/colors.scss';
+
+@import './tokens/typography.css';
+@import './tokens/spacing.css';
+@import './tokens/base.css';
+@import './tokens/article.css';
+
+/* ── site-level defaults (page shell) ── */
+html { scroll-behavior: smooth; }           /* powers BottomLinks page-top, JS-free */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+}
+
+html, body { margin: 0; }
+body {
+  background: var(--surface-page);
+  color: var(--ink);
+  font-family: var(--font-sans);
+}
+a { color: var(--link-internal); text-decoration: none; }
+
+.wrap { max-width: 1200px; margin: 0 auto; }

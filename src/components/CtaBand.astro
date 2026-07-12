@@ -1,0 +1,27 @@
+---
+// O8 — azul closer. LinkedIn = the page's single cherry accent; Email ghost. Never a form.
+import Btn from './Btn.astro';
+interface Props { title: string; accentWord?: string; linkedinHref: string; emailHref: string }
+const { title, accentWord, linkedinHref, emailHref } = Astro.props;
+const parts = accentWord && title.includes(accentWord) ? title.split(accentWord) : null;
+---
+<section class="cta">
+  <h2>{parts ? <>{parts[0]}<em>{accentWord}</em>{parts[1]}</> : title}</h2>
+  <div class="acts">
+    <Btn variant="accent" external href={linkedinHref}>LinkedIn</Btn>
+    <Btn variant="ghost" href={emailHref} data-onbrand>Email</Btn>
+  </div>
+</section>
+<style lang="scss">
+  .cta {
+    display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 20px;
+    background: var(--surface-brand); border-radius: var(--radius-card);
+    margin: 10px var(--gutter-page) 34px; padding: 34px 38px;
+    h2 { font-family: var(--font-sans); font-weight: var(--weight-bold); font-size: clamp(24px, 3vw, 32px);
+      color: var(--text-on-brand); margin: 0; max-width: 560px;
+      em { font-family: var(--font-serif); font-weight: var(--weight-regular); font-style: italic; } }
+    .acts { display: flex; gap: 12px;
+      :global(.btn.ghost) { color: #fff; border-color: rgba(255,255,255,.4);
+        &:hover { border-color: #fff; } } }
+  }
+</style>

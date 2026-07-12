@@ -1,0 +1,27 @@
+---
+// O2 — verbs repeated + the three high-intent links. No newsletter, no social wall.
+import { SITE } from '../config/site';
+const base = import.meta.env.BASE_URL;
+---
+<footer class="site-footer">
+  <span class="verbs">
+    <a href={base + 'working/'}>Working</a> · <a href={base + 'speaking/'}>Speaking</a> ·
+    <a href={SITE.adplist} target="_blank" rel="noopener">Mentoring ⧉</a> ·
+    <a href={SITE.garden} target="_blank" rel="noopener">Thinking ⧉</a>
+  </span>
+  <span class="intent">
+    <a href={SITE.linkedin} target="_blank" rel="noopener">LinkedIn ⧉</a> ·
+    <a href={SITE.email}>Email</a> ·
+    <a href={SITE.garden} target="_blank" rel="noopener">notes.antonioavalos.com ⧉</a>
+  </span>
+</footer>
+<style lang="scss">
+  .site-footer {
+    display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px;
+    padding: 18px var(--gutter-page); border-top: 1px solid var(--border);
+    background: var(--surface-page);
+    font-size: var(--text-ui-sm); color: var(--text-meta);
+    a { color: var(--text-meta); &:hover { color: var(--brand); } }
+    .intent a { color: var(--brand-soft); }
+  }
+</style>

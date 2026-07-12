@@ -1,0 +1,20 @@
+---
+// A7 — one confident metric. rule = border-left; onBrand for OutcomeBox.
+interface Props { value: string; caption: string; onBrand?: boolean; rule?: boolean }
+const { value, caption, onBrand = false, rule = true } = Astro.props;
+---
+<div class:list={['stat', { 'on-brand': onBrand, rule }]}>
+  <div class="v">{value}</div>
+  <div class="c">{caption}</div>
+</div>
+<style lang="scss">
+  .stat {
+    &.rule { border-left: 3px solid var(--brand-tint); padding-left: 14px; }
+    .v { font-family: var(--font-sans); font-weight: var(--weight-bold); font-size: 30px; line-height: 1.1; color: var(--brand); }
+    .c { font-family: var(--font-sans); font-size: var(--text-ui-sm); line-height: 1.4; color: var(--text-secondary); margin-top: 4px; }
+    &.on-brand {
+      &.rule { border-left-color: rgba(255,255,255,.25); }
+      .v { color: #fff; } .c { color: var(--brand-tint); }
+    }
+  }
+</style>

@@ -1,0 +1,15 @@
+---
+// M6/MetaLine — dot-separated facts; separators are ::before so gaps collapse. coffee = ☕ read-time flavor.
+interface Props { items: (string|undefined)[]; coffee?: boolean }
+const { items, coffee = false } = Astro.props;
+const clean = items.filter(Boolean) as string[];
+---
+<div class="meta">
+  {clean.map((it, i) => <span class="m">{coffee && /min/.test(it) ? `☕ ${it}` : it}</span>)}
+</div>
+<style lang="scss">
+  .meta {
+    font-family: var(--font-sans); font-size: var(--text-meta-size); color: var(--text-meta);
+    .m + .m::before { content: ' · '; }
+  }
+</style>

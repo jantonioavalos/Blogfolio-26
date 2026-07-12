@@ -1,0 +1,12 @@
+---
+// O7 — 4-stat band. Data from config, never hardcoded.
+import Stat from './Stat.astro';
+interface Props { stats: { value: string; caption: string }[] }
+const { stats } = Astro.props;
+---
+<div class="metrics">
+  {stats.map((s) => <Stat value={s.value} caption={s.caption} />)}
+</div>
+<style lang="scss">
+  .metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 22px; }
+</style>

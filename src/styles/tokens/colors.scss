@@ -1,0 +1,128 @@
+// tokens/colors.scss — Antonio Ávalos design system · SOURCE OF TRUTH
+// ─────────────────────────────────────────────────────────────────────
+// Edit THIS file, then compile → colors.css:
+//   npx sass tokens/colors.scss tokens/colors.css --no-source-map
+//
+// Three schemes re-assign the SAME semantic token names.
+//   Light  = :root
+//   Sepia  = [data-theme="sepia"]          (explicit choice only)
+//   Dark   = [data-theme="dark"]           (explicit choice)
+//          + prefers-color-scheme auto     (only when NO choice was made)
+//
+// F1 fix: the dark ramp lives ONCE, in the mixin below. Both dark
+// selectors include it — no more copy-paste drift.
+// ─────────────────────────────────────────────────────────────────────
+
+// ═══ DARK RAMP — defined once (F1) ═══
+@mixin dark-tokens {
+  --brand: #7ba3d8;
+  --brand-soft: #9db9de;
+  --brand-tint: #3a4f70;
+  --accent: #e87295;
+  --accent-tint: #7c3a4e;
+  --ink: #e8ebf1;
+  --text-heading: #cfe0f5;
+  --text-body: rgba(232, 235, 241, .88);
+  --text-secondary: #a7adb9;
+  --text-meta: #8b93a2;            /* F3: was #767d8a (~4.1:1) → ~5.2:1 on #10151d */
+  --text-on-brand: #0f1520;
+  --link-internal: var(--brand);
+  --link-external: var(--accent);  /* dark cherry #e87295 ≈ 7:1 on #10151d — no split needed */
+  --surface-page: #10151d;
+  --surface-1: #171e29;
+  --surface-2: #1c2432;
+  --surface-card: #1a212c;
+  --surface-brand: #24354f;
+  --border: #2a3342;
+  --border-hairline: #222a37;
+  --highlighter: rgba(232, 114, 149, .22);
+  --shadow-card: 0 6px 22px rgba(0, 0, 0, .4);
+  --shadow-card-sm: 0 3px 12px rgba(0, 0, 0, .3);
+  --shadow-card-hover: 0 10px 28px rgba(0, 0, 0, .5);
+}
+
+// ═══ LIGHT (default) ═══
+:root {
+  /* -- brand core (from brandbook) -- */
+  --brand: #003063;            /* azul — headlines, buttons, brand surfaces */
+  --brand-soft: #2e4f83;       /* azul softened — eyebrows on tinted fields */
+  --brand-tint: #c1d1ec;       /* azul 25% — captions on solid brand surfaces */
+  --accent: #d9436d;           /* cherry — DISPLAY uses: hover fills, dropcap, hr dots, the ONE solid CTA */
+  --accent-tint: #f2c0ce;      /* cherry 25% — external links on dark/brand surfaces */
+  --ink: #1d1d1b;              /* neutral text core (brandbook negro) */
+
+  /* -- text roles -- */
+  --text-heading: var(--brand);
+  --text-body: rgba(0, 0, 0, .84);   /* article serif body */
+  --text-secondary: #55555c;         /* UI paragraphs, card descriptions */
+  --text-meta: #6c6c74;              /* F3: was #9a9aa2 (2.8:1 ✗) → 4.6:1 AA ✓ */
+  --text-on-brand: #ffffff;
+
+  /* -- link species: the color IS the wayfinding -- */
+  --link-internal: var(--brand);     /* stays on site  → */
+  --link-external: #c23a62;          /* D5: darkened cherry for TEXT links ≈5:1 AA;
+                                        --accent stays the display cherry */
+
+  /* -- surfaces -- */
+  --surface-page: #ffffff;
+  --surface-1: #f3f6fb;              /* azul-tinted section field */
+  --surface-2: #eaf0f9;              /* D6: chip/tag fill — now one step deeper than surface-1 */
+  --surface-card: #ffffff;
+  --surface-brand: var(--brand);     /* CTA band, outcome box */
+  --border: #e2e8f2;
+  --border-hairline: #eef1f6;
+
+  /* -- feedback / marks -- */
+  --highlighter: rgba(242, 192, 206, .4);  /* F4: ::selection + <mark> — cherry-tint at 40% alpha */
+  --mask-strength-top: rgba(20, 26, 38, .18);
+  --mask-strength-bottom: rgba(10, 16, 28, .62);
+
+  /* -- elevation (Direction B: shadow-lift cards) -- */
+  --shadow-card: 0 6px 22px rgba(14, 24, 39, .09);
+  --shadow-card-sm: 0 3px 12px rgba(14, 24, 39, .06);
+  --shadow-card-hover: 0 10px 28px rgba(14, 24, 39, .14);
+}
+
+// ═══ SEPIA — one block, complete (F2) ═══
+// Brand/accent inherit from light (azul/cherry on cream ≥ 4.5:1 — verified),
+// stated here explicitly so the scheme is self-contained and auditable.
+[data-theme="sepia"] {
+  --brand: #003063;
+  --brand-soft: #2e4f83;
+  --brand-tint: #c1d1ec;
+  --accent: #c23a62;               /* display cherry darkened a step on cream */
+  --accent-tint: #f2c0ce;
+  --ink: #3a3226;
+  --text-heading: var(--brand);
+  --text-body: rgba(46, 38, 26, .9);
+  --text-secondary: #6b5f4d;
+  --text-meta: #75664a;            /* F3: was #a2937c (~3.1:1) → ~4.6:1 on #f8f3e9 */
+  --text-on-brand: #ffffff;
+  --link-internal: var(--brand);
+  --link-external: #b03356;        /* text cherry, one step deeper for cream bg */
+  --surface-page: #f8f3e9;
+  --surface-1: #f1e9d8;
+  --surface-2: #ece2cc;            /* D6: one step deeper than surface-1 */
+  --surface-card: #fdfaf3;
+  --surface-brand: var(--brand);
+  --border: #e4d9c3;
+  --border-hairline: #ece3d0;
+  --highlighter: rgba(217, 67, 109, .14);
+  --mask-strength-top: rgba(20, 26, 38, .18);
+  --mask-strength-bottom: rgba(10, 16, 28, .62);
+  --shadow-card: 0 6px 22px rgba(72, 58, 32, .12);
+  --shadow-card-sm: 0 3px 12px rgba(72, 58, 32, .08);
+  --shadow-card-hover: 0 10px 28px rgba(72, 58, 32, .16);
+}
+
+// ═══ DARK — explicit choice ═══
+[data-theme="dark"] {
+  @include dark-tokens;
+}
+
+// ═══ DARK — auto, only when the visitor never chose ═══
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    @include dark-tokens;
+  }
+}

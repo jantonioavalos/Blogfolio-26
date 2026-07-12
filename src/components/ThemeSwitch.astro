@@ -1,0 +1,24 @@
+---
+// M12 — Light/Sepia/Dark. Wired by theme.js Part B in BaseLayout.
+const themes = ['light', 'sepia', 'dark'] as const;
+---
+<span class="theme-switch" role="group" aria-label="Color scheme">
+  {themes.map((t) => (
+    <button type="button" data-set-theme={t} aria-pressed="false" title={t}>
+      {t === 'light' ? '☀' : t === 'sepia' ? '📖' : '☾'}
+    </button>
+  ))}
+</span>
+<style lang="scss">
+  .theme-switch {
+    display: inline-flex; gap: 2px; padding: 3px;
+    background: var(--surface-2); border-radius: var(--radius-chip);
+    button {
+      border: 0; background: transparent; cursor: pointer;
+      font-size: 13px; line-height: 1; padding: 6px 9px;
+      border-radius: var(--radius-chip); color: var(--text-secondary);
+      &[aria-pressed="true"] { background: var(--surface-card); color: var(--brand); box-shadow: var(--shadow-card-sm); }
+      &:focus-visible { outline: 2px solid var(--brand); outline-offset: 1px; }
+    }
+  }
+</style>

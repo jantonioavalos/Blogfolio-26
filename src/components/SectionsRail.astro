@@ -1,0 +1,37 @@
+---
+// O10 — curated horizontal strip. Scroll-snap, zero JS. Mixes internal + garden ⧉ items.
+interface Item { title: string; meta: string; href: string; external?: boolean }
+interface Props { label: string; items: Item[] }
+const { label, items } = Astro.props;
+const base = import.meta.env.BASE_URL;
+---
+<section class="rail">
+  <div class="label">{label}</div>
+  <div class="strip">
+    {items.map((it) => (
+      <a class:list={['item', { ext: it.external }]}
+         href={it.external ? it.href : base + it.href.replace(/^\//, '')}
+         target={it.external ? '_blank' : undefined} rel={it.external ? 'noopener' : undefined}>
+        <span class="t">{it.title}{it.external ? ' ⧉' : ''}</span>
+        <span class="m">{it.meta}</span>
+      </a>
+    ))}
+  </div>
+</section>
+<style lang="scss">
+  .rail { padding: 18px 0 8px;
+    .label { padding: 0 var(--gutter-page); font-weight: 600; font-size: var(--text-eyebrow);
+      letter-spacing: .14em; text-transform: uppercase; color: var(--brand-soft); margin-bottom: 14px; }
+    .strip { display: flex; gap: 16px; overflow-x: auto; padding: 2px var(--gutter-page) 14px;
+      scroll-snap-type: x mandatory; scrollbar-width: thin;
+      .item { flex: 0 0 250px; scroll-snap-align: start;
+        background: var(--surface-card); border: 1px solid var(--border);
+        border-radius: var(--radius-card); padding: 16px 18px;
+        display: flex; flex-direction: column; gap: 6px;
+        box-shadow: var(--shadow-card-sm);
+        .t { font-weight: 600; font-size: 16px; line-height: 1.3; color: var(--text-heading); }
+        .m { font-size: var(--text-meta-size); color: var(--text-meta); }
+        &.ext .t { color: var(--link-external); }
+        &:hover { box-shadow: var(--shadow-card-hover); } } }
+  }
+</style>

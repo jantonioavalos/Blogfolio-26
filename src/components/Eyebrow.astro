@@ -1,0 +1,15 @@
+---
+// A5 — small-caps section marker. tick = leading dash (hero kicker); onBrand for azul surfaces.
+interface Props { tick?: boolean; onBrand?: boolean; class?: string }
+const { tick = false, onBrand = false, class: cls = '' } = Astro.props;
+---
+<span class:list={['eyebrow', { tick, 'on-brand': onBrand }, cls]}><slot /></span>
+<style lang="scss">
+  .eyebrow {
+    display: inline-block; font-family: var(--font-sans);
+    font-weight: 600; font-size: var(--text-eyebrow);
+    letter-spacing: .14em; text-transform: uppercase; color: var(--brand-soft);
+    &.tick::before { content: '— '; }
+    &.on-brand { color: var(--brand-tint); }
+  }
+</style>

@@ -1,0 +1,56 @@
+---
+// O4 — vertical card (sneak-peeks, Speaking grid, future Blog). Whole card clickable
+// (stretched link); chips independently clickable. No cover → typographic tile (A9).
+import TagChip from './TagChip.astro';
+import MetaLine from './MetaLine.astro';
+interface Props {
+  title: string; href?: string; external?: boolean; type?: 'case'|'talk'|'note';
+  tag?: string; description?: string; meta?: string[]; coffee?: boolean;
+  cover?: string; coverHeight?: number;
+  chips?: { deck?: string; video?: string };
+}
+const { title, href, external = false, type = 'case', tag, description, meta = [], coffee = false, cover, coverHeight = 170, chips } = Astro.props;
+const base = import.meta.env.BASE_URL;
+const url = href ? (external ? href : base + href.replace(/^\//, '')) : undefined;
+---
+<article class="ccard">
+  <div class="cover" style={`height:${coverHeight}px`}>
+    {cover
+      ? <img src={cover.startsWith('http') ? cover : base + cover.replace(/^\//,'')} alt="" loading="lazy" />
+      : <span class="tile" aria-hidden="true"><em>{title.slice(0, 1)}</em></span>}
+  </div>
+  <div class="body">
+    {tag && <div class="tags"><TagChip>{tag}</TagChip></div>}
+    {url
+      ? <a class="title" href={url} target={external ? '_blank' : undefined} rel={external ? 'noopener' : undefined}>{title}{external ? ' ⧉' : ''}<span class="stretch" aria-hidden="true"></span></a>
+      : <span class="title">{title}</span>}
+    {description && <p class="desc">{description}</p>}
+    {meta.length > 0 && <MetaLine items={meta} coffee={coffee} />}
+    {chips && (chips.deck || chips.video) && (
+      <div class="chips">
+        {chips.deck && <a href={chips.deck} target="_blank" rel="noopener">Deck ⧉</a>}
+        {chips.video && <a href={chips.video} target="_blank" rel="noopener">Video ⧉</a>}
+      </div>
+    )}
+  </div>
+</article>
+<style lang="scss">
+  .ccard {
+    position: relative; display: flex; flex-direction: column;
+    background: var(--surface-card); border: 1px solid var(--border);
+    border-radius: var(--radius-card); overflow: hidden;
+    box-shadow: var(--shadow-card-sm);
+    transition: box-shadow .15s ease, transform .15s ease;
+    &:hover { box-shadow: var(--shadow-card-hover); transform: translateY(-2px); }
+    @media (prefers-reduced-motion: reduce) { &:hover { transform: none; } }
+  }
+  .cover { background: var(--surface-1); display: flex; align-items: center; justify-content: center; overflow: hidden;
+    img { width: 100%; height: 100%; object-fit: cover; }
+    .tile em { font-family: var(--font-serif); font-style: italic; font-size: 54px; color: var(--brand-tint); } }
+  .body { display: flex; flex-direction: column; gap: 9px; padding: 18px 20px 20px; }
+  .title { font-weight: var(--weight-bold); font-size: 19px; line-height: 1.25; color: var(--text-heading);
+    .stretch { position: absolute; inset: 0; } }
+  .desc { font-size: var(--text-ui-sm); line-height: 1.5; color: var(--text-secondary); margin: 0; }
+  .chips { position: relative; z-index: 1; display: flex; gap: 14px;
+    a { font-weight: 600; font-size: var(--text-ui-sm); color: var(--link-external); } }
+</style>

@@ -1,0 +1,79 @@
+---
+// WORKING — per Working.dc.html: hero · metrics · values · Selected work (image-variant
+// lead + alternating tall cards) · Mentoring/Speaking promos · #contact CtaBand · footer.
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SiteHeader from '../components/SiteHeader.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import Hero from '../components/Hero.astro';
+import MetricsRow from '../components/MetricsRow.astro';
+import Eyebrow from '../components/Eyebrow.astro';
+import WideCard from '../components/WideCard.astro';
+import PromoCard from '../components/PromoCard.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { getCollection } from 'astro:content';
+import { METRICS, VALUES, PROMOS, SITE } from '../config/site';
+
+const posts = (await getCollection('posts'))
+  .filter((p) => !p.data.draft && !p.data.private && p.data.type === 'Case Study')
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+const slug = (p: any) => `/work/${p.id.replace(/^work\//, '').replace(/\.md$/, '')}/`;
+const lead = posts.find((p) => p.data.featured) ?? posts[0];
+const rest = posts.filter((p) => p !== lead).slice(0, 2);
+const withWriteup = (p: any) => ({ writeup: slug(p), ...p.data.links });
+---
+<BaseLayout title="Working — Antonio Ávalos">
+  <div id="top">
+    <SiteHeader current="Working" />
+    <Hero
+      kicker="Hi, I'm Antonio"
+      title="Turning messy operations into measurable products."
+      accentWord="measurable"
+      subtitle="Product manager across real estate, eLearning and design systems. I build the infrastructure that makes teams fast."
+    />
+    <div class="metrics-pad"><MetricsRow stats={METRICS} /></div>
+
+    <div class="values">
+      {VALUES.map((v) => (
+        <div><div class="vt">{v.title}</div><div class="vx">{v.text}</div></div>
+      ))}
+    </div>
+
+    <div class="selected">
+      <Eyebrow>Selected work</Eyebrow>
+      <div class="stack">
+        {lead && (
+          <WideCard imageVariant title={lead.data.title} description={lead.data.description}
+            tags={lead.data.tags} href={slug(lead)} cover={lead.data.cover} links={withWriteup(lead)} />
+        )}
+        {rest.map((p, i) => (
+          <WideCard size="tall" imageSide={i % 2 === 0 ? 'right' : 'left'}
+            title={p.data.title} description={p.data.description} tags={p.data.tags}
+            href={slug(p)} cover={p.data.cover} links={withWriteup(p)} />
+        ))}
+      </div>
+    </div>
+
+    <div class="promos">
+      <PromoCard {...PROMOS.mentoring} />
+      <PromoCard {...PROMOS.speaking} />
+    </div>
+
+    <div id="contact">
+      <CtaBand title="Let's build something measurable." accentWord="measurable"
+        linkedinHref={SITE.linkedin} emailHref={SITE.email} />
+    </div>
+    <SiteFooter />
+  </div>
+</BaseLayout>
+<style lang="scss">
+  .metrics-pad { padding: 16px var(--gutter-page) 36px; }
+  .values { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 22px; padding: 0 var(--gutter-page) 30px;
+    .vt { font-weight: var(--weight-bold); font-size: 17px; color: var(--text-heading); margin-bottom: 5px; }
+    .vx { font-size: var(--text-ui-sm); line-height: 1.5; color: var(--text-secondary); } }
+  .selected { padding: 30px var(--gutter-page) 40px; background: var(--surface-1);
+    .stack { display: flex; flex-direction: column; gap: 24px; margin-top: 20px; } }
+  .promos { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 22px; padding: 32px var(--gutter-page) 40px; }
+</style>

@@ -1,0 +1,13 @@
+---
+// O11 — "More like this": 2–3 ContentCards sharing a tag. Complements NextCase.
+import ContentCard from './ContentCard.astro';
+interface Item { title: string; href: string; meta?: string[]; coffee?: boolean; cover?: string }
+interface Props { items: Item[] }
+const { items } = Astro.props;
+---
+<div class="related">
+  {items.slice(0, 3).map((it) => <ContentCard {...it} coverHeight={120} />)}
+</div>
+<style lang="scss">
+  .related { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; }
+</style>

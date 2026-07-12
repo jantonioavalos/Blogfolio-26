@@ -1,0 +1,11 @@
+/* tokens/base.css — resets + page scaffolding */
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background: var(--surface-page);
+  color: var(--ink);
+  font-family: var(--font-sans);
+}
+a { color: var(--link-internal); text-decoration: none; }
+a:hover { color: var(--accent); }
+img { max-width: 100%; display: block; }

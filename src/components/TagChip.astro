@@ -1,0 +1,15 @@
+---
+// A4 — topic chip. Non-linking in v1. onImage = over image-variant covers.
+interface Props { onImage?: boolean }
+const { onImage = false } = Astro.props;
+---
+<span class:list={['tag', { 'on-image': onImage }]}><slot /></span>
+<style lang="scss">
+  .tag {
+    display: inline-block; background: var(--surface-2);
+    border-radius: var(--radius-chip); padding: 4px 12px;
+    font-family: var(--font-sans); font-weight: 600;
+    font-size: var(--text-meta-size); color: var(--brand-soft);
+    &.on-image { background: rgba(255,255,255,.18); color: #fff; backdrop-filter: blur(4px); }
+  }
+</style>

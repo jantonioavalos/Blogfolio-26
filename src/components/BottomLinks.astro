@@ -1,0 +1,13 @@
+---
+// M10 — ghost pair closing long case studies. Page-top via CSS scroll-behavior (no JS).
+import Btn from './Btn.astro';
+interface Props { backHref: string; backLabel: string }
+const { backHref, backLabel } = Astro.props;
+---
+<div class="bottomlinks">
+  <Btn variant="ghost" small href={backHref}>← {backLabel}</Btn>
+  <Btn variant="ghost" small href="#top">↑ Page top</Btn>
+</div>
+<style lang="scss">
+  .bottomlinks { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+</style>

@@ -1,0 +1,27 @@
+---
+// M4 — per-project link row. Write-up (internal, azul, underlined) first; externals cherry.
+// Only present slots render. onImage = light treatment over covers.
+interface Props {
+  links: { writeup?: string; live?: string; figma?: string; repo?: string; board?: string };
+  onImage?: boolean;
+}
+const { links, onImage = false } = Astro.props;
+const base = import.meta.env.BASE_URL;
+const EXT: [keyof typeof links, string][] = [['live','Live'],['figma','Figma'],['repo','Repo'],['board','Board']];
+---
+<div class:list={['slots', { 'on-image': onImage }]}>
+  {links.writeup && <a class="w" href={base + links.writeup.replace(/^\//,'')}>Read case →</a>}
+  {EXT.map(([k, label]) => links[k] && (
+    <a class="e" href={links[k]} target="_blank" rel="noopener">{label} ⧉</a>
+  ))}
+</div>
+<style lang="scss">
+  .slots {
+    display: flex; flex-wrap: wrap; gap: 16px;
+    font-family: var(--font-sans); font-weight: 600; font-size: var(--text-ui-sm);
+    .w { color: var(--link-internal); text-decoration: underline; text-underline-offset: 3px; }
+    .e { color: var(--link-external); }
+    a:hover { color: var(--accent); }
+    &.on-image { .w, .e { color: #fff; } .e { opacity: .92; } }
+  }
+</style>

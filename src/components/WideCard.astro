@@ -1,0 +1,75 @@
+---
+// O3 ★ the workhorse. size tall|short · imageSide left|right · imageVariant = title
+// over cover with the A13 protection mask. Stretched link + z-indexed slot links.
+import TagChip from './TagChip.astro';
+import LinkSlots from './LinkSlots.astro';
+interface Props {
+  title: string; href: string; description?: string; tags?: string[];
+  size?: 'tall'|'short'; imageSide?: 'left'|'right'; imageVariant?: boolean;
+  cover?: string;
+  links?: { writeup?: string; live?: string; figma?: string; repo?: string; board?: string };
+}
+const { title, href, description, tags = [], size = 'tall', imageSide = 'left', imageVariant = false, cover, links = {} } = Astro.props;
+const base = import.meta.env.BASE_URL;
+const url = base + href.replace(/^\//, '');
+const coverUrl = cover ? (cover.startsWith('http') ? cover : base + cover.replace(/^\//,'')) : undefined;
+---
+{imageVariant ? (
+  <div class="wcard iv">
+    <div class="ivcover" style={coverUrl ? `background-image:url('${coverUrl}')` : undefined}>
+      <div class="mask">
+        <div class="ivbody">
+          {tags.length > 0 && <div class="tags">{tags.map((t) => <TagChip onImage>{t}</TagChip>)}</div>}
+          <a class="title" href={url}>{title}<span class="stretch" aria-hidden="true"></span></a>
+          {description && <p class="desc">{description}</p>}
+          <div class="slots"><LinkSlots links={links} onImage /></div>
+        </div>
+      </div>
+    </div>
+  </div>
+) : (
+  <div class:list={['wcard', 'flat', size, { right: imageSide === 'right' }]}>
+    <div class="img">{coverUrl && <img src={coverUrl} alt="" loading="lazy" />}</div>
+    <div class="body">
+      {tags.length > 0 && <div class="tags">{tags.map((t) => <TagChip>{t}</TagChip>)}</div>}
+      <a class="title" href={url}>{title}<span class="stretch" aria-hidden="true"></span></a>
+      {description && <p class="desc">{description}</p>}
+      <div class="slots"><LinkSlots links={links} /></div>
+    </div>
+  </div>
+)}
+<style lang="scss">
+  .wcard { position: relative; border-radius: var(--radius-card); overflow: hidden; box-shadow: var(--shadow-card); }
+  .stretch { position: absolute; inset: 0; }
+  .tags { display: flex; gap: 8px; }
+  .slots { position: relative; z-index: 1; margin-top: auto; }
+
+  .iv .ivcover {
+    height: 400px; background: linear-gradient(135deg, var(--brand-soft), var(--brand));
+    background-size: cover; background-position: center;
+    .mask { height: 100%; display: flex; align-items: flex-end;
+      background: linear-gradient(var(--mask-strength-top) 30%, var(--mask-strength-bottom)); }
+    .ivbody { padding: 32px 36px; display: flex; flex-direction: column; gap: 10px;
+      .title { font-weight: var(--weight-bold); font-size: clamp(26px, 3vw, 36px); line-height: 1.15; color: #fff; max-width: 640px; }
+      .desc { font-size: 17px; line-height: 1.5; color: rgba(255,255,255,.85); max-width: 560px; margin: 0; }
+      .slots { margin-top: 4px; } }
+  }
+
+  .flat { display: flex; background: var(--surface-card);
+    &.right { flex-direction: row-reverse; }
+    .img { flex: none; background: var(--surface-1);
+      img { width: 100%; height: 100%; object-fit: cover; display: block; } }
+    &.tall .img { width: 44%; min-height: 270px; }
+    &.short .img { width: 28%; min-height: 130px; }
+    .body { flex: 1; display: flex; flex-direction: column; gap: 11px; }
+    &.tall .body { padding: 30px; }
+    &.short .body { padding: 22px 26px; }
+    .title { font-weight: var(--weight-bold); font-size: var(--text-card-title-lg, 26px); line-height: 1.2; color: var(--text-heading); }
+    &.short .title { font-size: 21px; }
+    .desc { font-size: 16px; line-height: 1.55; color: var(--text-secondary); margin: 0; }
+    @media (max-width: 768px) {
+      &, &.right { flex-direction: column; }
+      .img, &.tall .img, &.short .img { width: 100%; min-height: 200px; }
+    }
+  }
+</style>

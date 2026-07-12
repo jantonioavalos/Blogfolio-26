@@ -1,0 +1,21 @@
+---
+// M5/Toc — article table of contents. Desktop sticky rail list. :target tick, no scroll-spy.
+interface Props { items: { id: string; label: string }[] }
+const { items } = Astro.props;
+---
+<nav class="toc" aria-label="Contents">
+  <div class="h">Contents</div>
+  <ol>
+    {items.map((it) => <li><a href={`#${it.id}`}>{it.label}</a></li>)}
+  </ol>
+</nav>
+<style lang="scss">
+  .toc { background: var(--surface-card); border: 1px solid var(--border);
+    border-radius: var(--radius-card); padding: 18px 20px;
+    .h { font-weight: 600; font-size: var(--text-eyebrow); letter-spacing: .14em;
+      text-transform: uppercase; color: var(--brand-soft); margin-bottom: 10px; }
+    ol { margin: 0; padding: 0 0 0 2px; list-style: none; display: flex; flex-direction: column; gap: 8px;
+      a { font-size: var(--text-ui-sm); color: var(--text-secondary);
+        &:hover { color: var(--brand); } } }
+  }
+</style>

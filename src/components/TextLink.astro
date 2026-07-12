@@ -1,0 +1,21 @@
+---
+// A3/TextLink — hard wayfinding: azul → internal, cherry ⧉ external. Never mixed.
+interface Props { href: string; external?: boolean; underline?: boolean }
+const { href, external = false, underline = false } = Astro.props;
+const base = import.meta.env.BASE_URL;
+const url = external ? href : base + href.replace(/^\//, '');
+---
+<a class:list={['textlink', { ext: external, u: underline }]} href={url}
+   target={external ? '_blank' : undefined} rel={external ? 'noopener' : undefined}>
+  <slot />{external ? ' ⧉' : ''}
+</a>
+<style lang="scss">
+  .textlink {
+    font-family: var(--font-sans); font-weight: 600; font-size: var(--text-ui-sm);
+    color: var(--link-internal); transition: transform var(--motion-fast, .15s) ease;
+    &.ext { color: var(--link-external); }
+    &.u { text-decoration: underline; text-underline-offset: 3px; }
+    &:hover { color: var(--accent); }
+    &:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; border-radius: 2px; }
+  }
+</style>
