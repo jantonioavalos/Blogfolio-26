@@ -10,36 +10,25 @@
           {
             "id": "e7a7b303c61786dc",
             "type": "leaf",
-            "pinned": true,
             "state": {
-              "type": "markdown",
+              "type": "kanban",
               "state": {
-                "file": "work/real-estate-future-value-insights.md",
-                "mode": "source",
-                "source": false,
-                "backlinks": false
+                "file": "Kanban.md",
+                "kanbanViewState": {
+                  "kanban-plugin": "board",
+                  "list-collapse": [
+                    false,
+                    false,
+                    false,
+                    false
+                  ]
+                }
               },
-              "pinned": true,
-              "icon": "lucide-file",
-              "title": "real-estate-future-value-insights"
-            }
-          },
-          {
-            "id": "d204e6b06265f2e3",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "work/real-estate-future-value-insights.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "real-estate-future-value-insights"
+              "icon": "lucide-trello",
+              "title": "Kanban"
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "vertical"
@@ -122,12 +111,26 @@
         "type": "tabs",
         "children": [
           {
+            "id": "c5ffd11e9b018ac7",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "Kanban.md",
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "Outline"
+            }
+          },
+          {
             "id": "6718a9c36b3e55b3",
             "type": "leaf",
             "state": {
               "type": "backlink",
               "state": {
-                "file": "work/real-estate-future-value-insights.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -146,7 +149,6 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "work/real-estate-future-value-insights.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
@@ -182,44 +184,25 @@
               "icon": "lucide-archive",
               "title": "All properties"
             }
-          },
-          {
-            "id": "c5ffd11e9b018ac7",
-            "type": "leaf",
-            "state": {
-              "type": "outline",
-              "state": {
-                "file": "work/real-estate-future-value-insights.md",
-                "followCursor": false,
-                "showSearch": false,
-                "searchQuery": ""
-              },
-              "icon": "lucide-list",
-              "title": "Outline"
-            }
-          },
+          }
+        ]
+      },
+      {
+        "id": "174e948378dda8db",
+        "type": "tabs",
+        "children": [
           {
             "id": "bdf43a6b464c30de",
             "type": "leaf",
             "state": {
               "type": "calendar",
               "state": {},
-              "icon": "lucide-ghost",
-              "title": "calendar"
+              "icon": "calendar-with-checkmark",
+              "title": "Calendar"
             }
           },
           {
             "id": "19172439280999c6",
-            "type": "leaf",
-            "state": {
-              "type": "todo",
-              "state": {},
-              "icon": "lucide-ghost",
-              "title": "todo"
-            }
-          },
-          {
-            "id": "49606b5ce45cf7c1",
             "type": "leaf",
             "state": {
               "type": "todo",
@@ -229,7 +212,7 @@
             }
           }
         ],
-        "currentTab": 7
+        "currentTab": 1
       }
     ],
     "direction": "horizontal",
@@ -249,12 +232,16 @@
       "obsidian-kanban:Create new board": false
     }
   },
-  "active": "d204e6b06265f2e3",
+  "active": "e7a7b303c61786dc",
   "lastOpenFiles": [
+    "kanban-cards",
+    "Kanban.md",
+    "templates/Kanban GTD.md",
+    "Untitled Kanban.md",
+    "work/real-estate-future-value-insights.md",
+    "templates",
     "work/building-a-second-brain-system.md",
     "work/14k-courses-one-catalog.md",
-    "Kanban.md",
-    "work/real-estate-future-value-insights.md",
     "attachments/real-estate-future-value-insights-img-9.png",
     "attachments/real-estate-future-value-insights-img-cover.png",
     "attachments/real-estate-future-value-insights-img-5.png",
