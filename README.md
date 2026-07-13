@@ -33,6 +33,24 @@ Requires Node 18+ (built & verified on Node 22 / Astro 5.18 / sass).
 | `public/fonts/` | The six self-hosted woff2 files (RHD 400/500/700 · SS4 400/600/400i). ✔ already included. |
 | `.github/workflows/deploy.yml` | Build + deploy on push to `main`. |
 
+## Design System
+
+Everything the site renders inherits one small, opinionated system — **Design System v1.1**. Source of truth: **`src/styles/tokens/`** (Astro compiles the SCSS at build; no manual step). Components never hard-code values — everything is `var(--*)`.
+
+- **Brand** — azul `#003063` (headlines, buttons, brand surfaces) + cherry `#d9436d` (*display* accent only: hover fills, dropcap, the ∙∙∙ divider, the one solid CTA). Neutral core `#1d1d1b`.
+- **Type** — two families, four weights: **Red Hat Display** (sans — UI, headings, card text) and **Source Serif 4** (serif — display H1, article body, quotes). Self-hosted woff2 in `public/fonts/`.
+- **Schemes** — one set of *semantic* tokens re-assigned across **Light** (default), **Sepia**, and **Dark**; auto-dark only when no choice was stored. Same markup works in every scheme (see [Architecture notes](#architecture-notes-for-future-you)).
+- **Wayfinding is color** — azul `→` stays on site, cherry `↗` leaves. Never mix.
+
+| Token file | Holds |
+|---|---|
+| `colors.scss` | 3 schemes, one dark mixin — **edit here** |
+| `typography.css` | families, weights, fluid scale, `--measure-article` (680px) |
+| `spacing.css` | fixed 4/8 space scale, radius, motion |
+| `base.css` · `article.css` | page resets · the readable `.article-body` scope (Markdown needs zero classes) |
+
+**Synced to Claude Design.** The token + style layer is also published to [claude.ai/design](https://claude.ai/design) as a standalone *"Blogfolio Tokens & Styles"* design system, so its design agent builds on-brand with the real tokens and fonts. Sync inputs live in **`.design-sync/`** (`config.json`, `NOTES.md`); re-run via the `/design-sync` skill. Note: the `.astro` components are compile-time HTML, not runtime React, so only tokens/styles are synced — not the components.
+
 ## Writing content (Obsidian)
 
 1. Obsidian → **Open folder as vault** → select `content/`.
