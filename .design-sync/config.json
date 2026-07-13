@@ -1,0 +1,7 @@
+{
+  "projectId": "ac203dd7-f010-4058-9b65-dc42268b6c3e",
+  "shape": "custom-tokens-only",
+  "pkg": "blogfolio",
+  "globalName": "Blogfolio",
+  "notes": "Off-script tokens-only sync. This Astro repo has no bundlable React entry, so the ds-bundle/ layout is hand-produced (empty-bodied _ds_bundle.js + styles.css closure + tokens/fonts + foundation preview cards). See .design-sync/NOTES.md."
+}

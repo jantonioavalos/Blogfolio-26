@@ -409,3 +409,7 @@ package-lock.json
 
 # macOS
 .DS_Store
+
+# design-sync build output
+ds-bundle/
+.design-sync/.cache/
