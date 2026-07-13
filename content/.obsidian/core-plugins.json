@@ -6,7 +6,7 @@
   "backlink": true,
   "canvas": true,
   "outgoing-link": true,
-  "tag-pane": true,
+  "tag-pane": false,
   "footnotes": false,
   "properties": true,
   "page-preview": true,
@@ -25,9 +25,9 @@
   "slides": false,
   "audio-recorder": false,
   "workspaces": false,
-  "file-recovery": true,
+  "file-recovery": false,
   "publish": false,
   "sync": false,
-  "bases": true,
+  "bases": false,
   "webviewer": false
 }

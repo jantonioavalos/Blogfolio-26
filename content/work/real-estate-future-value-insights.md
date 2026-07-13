@@ -1,3 +1,19 @@
+---
+title: "Real-estate operations: producing future value insights"
+description: "From spreadsheet chaos to a trusted pricing signal."
+date: 2025-05-15
+type: Case Study
+tags: [Data, Real estate]
+featured: false
+dropcap: true
+related: true
+layout: default
+outcomes:
+  - { value: "−63%", caption: "time to price an asset" }
+  - { value: "1 source", caption: "of truth, 4 teams" }
+links:
+  board: "https://miro.com/"
+---
 
 ## Context
 

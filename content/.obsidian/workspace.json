@@ -157,21 +157,6 @@
             }
           },
           {
-            "id": "aebab3fb20ffc5c8",
-            "type": "leaf",
-            "state": {
-              "type": "tag",
-              "state": {
-                "sortOrder": "frequency",
-                "useHierarchy": true,
-                "showSearch": false,
-                "searchQuery": ""
-              },
-              "icon": "lucide-tags",
-              "title": "Tags"
-            }
-          },
-          {
             "id": "59cc7a20a0e3f937",
             "type": "leaf",
             "state": {
@@ -221,9 +206,7 @@
   },
   "left-ribbon": {
     "hiddenItems": {
-      "daily-notes:Open today's daily note": false,
       "switcher:Open quick switcher": false,
-      "graph:Open graph view": false,
       "canvas:Create new canvas": false,
       "templates:Insert template": false,
       "command-palette:Open command palette": false,
@@ -234,8 +217,8 @@
   },
   "active": "e7a7b303c61786dc",
   "lastOpenFiles": [
-    "kanban-cards",
     "Kanban.md",
+    "kanban-cards",
     "templates/Kanban GTD.md",
     "Untitled Kanban.md",
     "work/real-estate-future-value-insights.md",
