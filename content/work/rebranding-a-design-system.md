@@ -4,9 +4,9 @@ description: "One library, 6k assets, 1k users — migrated without stopping the
 date: 2025-06-10
 type: Case Study
 tags: [Design system, B2B]
-featured: true
+featured: false
 dropcap: true
-related: true
+related: false
 layout: default
 outcomes:
   - { value: "6k", caption: "assets migrated" }

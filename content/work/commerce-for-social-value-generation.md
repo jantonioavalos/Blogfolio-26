@@ -4,10 +4,11 @@ description: "The first e-commerce for a corporation's employees — 16k users a
 date: 2024-02-25
 type: Case Study
 tags: [Product management, E-commerce]
-featured: false
+featured: true
 dropcap: true
 related: true
 layout: default
+cover: /covers/commerce-for-social-value-generation-img-4.png
 outcomes:
   - { value: "16k", caption: "registered users" }
   - { value: "US$160k+", caption: "sales in year one" }

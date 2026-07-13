@@ -6,7 +6,7 @@ type: Case Study
 tags: [Data, Real estate]
 featured: false
 dropcap: true
-related: true
+related: false
 layout: default
 outcomes:
   - { value: "−63%", caption: "time to price an asset" }

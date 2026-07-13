@@ -4,10 +4,11 @@ description: "From idea to MVP for a corporate online school — 14k course sale
 date: 2024-02-21
 type: Case Study
 tags: [Product management, Online education]
-featured: false
+featured: true
 dropcap: true
 related: true
 layout: default
+cover: /covers/online-education-for-the-digital-transformation-img-6.png
 outcomes:
   - { value: "14k", caption: "paid course accesses" }
   - { value: "13+", caption: "courses in 2 languages" }

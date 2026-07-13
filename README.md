@@ -10,7 +10,7 @@ You write in content/ (Obsidian) → git push → Action builds → Pages serves
 
 ```bash
 npm install
-npm run dev        # http://localhost:4321/blogfolio/
+npm run dev        # http://localhost:4321/Blogfolio-26/
 npm run build      # static site → dist/
 npm run preview    # serve dist/ exactly as production
 ```
@@ -22,6 +22,8 @@ Requires Node 18+ (built & verified on Node 22 / Astro 5.18 / sass).
 | Path | Role |
 |---|---|
 | `content/` | **Your Obsidian vault.** Open THIS folder as a vault. `work/*.md` = case studies (and future blog posts). |
+| `docs/content-reference.md` | **Deep reference** for every frontmatter field + how each list selects/counts. The day-to-day companion to this README. |
+| `public/covers/` | Card/hero cover images. `cover:` frontmatter points here (see Writing content). |
 | `src/config/site.ts` | **Site data**: nav verbs, metrics, values, talks, rail items, promos, your LinkedIn/email/garden URLs. Most edits happen here or in `content/`. |
 | `src/content.config.ts` | Content schema (the `type`-field model: Case Study \| Blog, tags, outcomes, links, dropcap, layout…). |
 | `src/styles/tokens/` | **Design System v1.1 — source of truth.** `colors.scss` = 3 schemes (edit here; Astro compiles it, no manual step). |
@@ -44,14 +46,14 @@ date: 2026-07-01
 type: Case Study        # or Blog (same collection — R2 model)
 tags: [Data]
 featured: false          # true = the image-variant lead card on /working/
-cover: /covers/x.jpg     # optional; omit → typographic tile
+cover: /covers/x.jpg     # optional; file lives in public/covers/. Write the path WITHOUT the Pages base (see Developer notes)
 dropcap: true            # opt-in ::first-letter flourish
 related: true            # show "More like this"
 draft: false
 private: false           # hidden from lists, page still builds
 outcomes:
   - { value: "−63%", caption: "time to price an asset" }
-links: { figma: "https://…", board: "https://…" }   # write-up slot is the page itself
+links: { figma: "https://…", board: "https://…" }   # shown on the /working/ card link row only, NOT on the post page
 ---
 Body in plain Markdown. ## headings feed the sticky TOC automatically.
 > Blockquotes render as the oversized serif pull-quote.
@@ -81,7 +83,7 @@ Talks live in `src/config/site.ts` (`TALKS`) — they're data, not pages (v1).
 - **Cards**: whole-card stretched links with z-indexed secondary links; missing covers fall back to the typographic tile — never broken images.
 - **Read time** (☕) is computed at build (~200 wpm). TOC comes from real `##` headings.
 - **NextCase** = next item in the collection (wraps around). **RelatedPosts** = shared-tag matches, opt-out with `related: false`.
-- **`layout` frontmatter** (6 post-header variants) is in the schema; v1 renders `default` — the other five are the designed next increment.
+- **`layout` frontmatter** (6 post-header variants) is declared in the schema but **not read by any code yet** — setting it is a no-op today. See Developer notes for how to wire it.
 
 ## Known placeholders (swap when ready)
 
@@ -89,3 +91,38 @@ Talks live in `src/config/site.ts` (`TALKS`) — they're data, not pages (v1).
 - Isotipo: the "A" square in header/hero/favicon awaits your real SVG lockup.
 - Case-study bodies in `content/work/` are design-data placeholders; covers absent → typographic tiles by design.
 - Talk deck/video chip URLs point at figma.com/youtube.com placeholders.
+
+## Developer notes and disclaimers
+
+> Full field-by-field reference and list-counting logic: **[`docs/content-reference.md`](docs/content-reference.md)**. This section is the short version — the gotchas that bite.
+
+### Base-path asset convention (read before adding images/links)
+The site deploys under a Pages **base** (`/Blogfolio-26/` in project-page mode, per `astro.config.mjs`; `/` with a custom domain). Every internal URL is prefixed with that base **inside components** using the repo idiom `base + path.replace(/^\//, '')`.
+
+- **Author frontmatter/config paths WITHOUT the base.** Write `cover: /covers/x.png`, not `/Blogfolio-26/covers/x.png`. Components add the base; writing it yourself double-prefixes (`/Blogfolio-26/Blogfolio-26/…`) and the image 404s.
+- This is a **code** concern, not a domain one — it does *not* fix itself when you attach a custom domain while the base is non-root.
+- Cover files must live in **`public/covers/`** (only `public/` is web-served). Images in `content/attachments/` are article-body images and are *not* servable as covers — copy one in if you want to reuse it.
+- *Regression fixed:* the case-study post header (`src/pages/work/[...slug].astro`) previously rendered `cover` without the base and threw the dev error *"Request URLs for public/ assets must also include your base."* All card and post consumers now base-prefix consistently.
+
+### Dormant / partial frontmatter fields
+| Field | State | Note |
+|---|---|---|
+| `layout` (6 variants) | 🔴 dormant | In the schema, read by no code. To activate, branch on `post.data.layout` in `[...slug].astro`. |
+| `extlink` | 🔴 dormant | In the schema, read by no code. Intended to make a card link out externally instead of to its post page. |
+| `links` | 🟡 partial | Renders on **/working/ cards only**, not on the post page. |
+| `type: Blog` | 🟡 partial | Builds a page, but **no list surface renders Blog posts yet** — every list filters for `Case Study`. |
+
+### List counts & where to change them
+| Surface | Count | Change at |
+|---|---|---|
+| Home · Working peek | newest **3** | `.slice(0, 3)` — [`index.astro:21`](src/pages/index.astro#L21) |
+| Working · lead card | **1** (`featured`, else newest) | `posts.find(featured)` — [`working.astro:21`](src/pages/working.astro#L21) |
+| Working · tall cards | up to **9** | `.slice(0, 9)` — [`working.astro:22`](src/pages/working.astro#L22) |
+| Post · Next case | **1**, wraps around | `[...slug].astro` |
+| Post · More like this | up to **3** | `.slice(0, 3)` in *both* `[...slug].astro` and [`RelatedPosts.astro:9`](src/components/RelatedPosts.astro#L9) |
+
+### Hiding content: `draft` vs `private`
+- `private: true` → out of every list, **page still builds** (share the URL privately).
+- `draft: true` → out of every list **and the page is not built at all**.
+
+Shared list filter: `!draft && !private && type === 'Case Study'`.

@@ -4,10 +4,11 @@ description: "From paper appraisals to a low-code platform with ML-driven proper
 date: 2024-03-03
 type: Case Study
 tags: [Product management, Real estate]
-featured: false
+featured: true
 dropcap: true
 related: true
 layout: default
+cover: /covers/real-estate-operations-producing-future-value-insights-img-16.png
 outcomes:
   - { value: "<16 min", caption: "to create an appraisal, from hours" }
   - { value: "3.7k+", caption: "properties by 1,100 users" }

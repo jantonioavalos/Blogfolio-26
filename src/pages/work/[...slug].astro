@@ -24,6 +24,11 @@ export async function getStaticPaths() {
 const { post } = Astro.props;
 const { Content, headings } = await render(post);
 
+const base = import.meta.env.BASE_URL;
+const coverUrl = post.data.cover
+  ? (post.data.cover.startsWith('http') ? post.data.cover : base + post.data.cover.replace(/^\//, ''))
+  : undefined;
+
 const all = (await getCollection('posts'))
   .filter((p) => !p.data.draft && !p.data.private && p.data.type === post.data.type)
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
@@ -67,8 +72,8 @@ const related = post.data.related
     </div>
 
     <div class="featured">
-      {post.data.cover
-        ? <img src={post.data.cover} alt="" />
+      {coverUrl
+        ? <img src={coverUrl} alt="" />
         : <div class="ph">featured image 21:9</div>}
     </div>
 
