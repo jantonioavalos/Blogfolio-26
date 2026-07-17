@@ -28,7 +28,7 @@ Requires Node 18+ (built & verified on Node 22 / Astro 5.18 / sass).
 | `src/content.config.ts` | Content schema (the `type`-field model: Case Study \| Blog, tags, outcomes, links, dropcap, layout…). |
 | `src/styles/tokens/` | **Design System v1.1 — source of truth.** `colors.scss` = 3 schemes (edit here; Astro compiles it, no manual step). |
 | `src/components/` | 23 `.astro` components ported from the DS `*.prompt.md` contracts. All styling via tokens. |
-| `src/pages/` | Home · `/working/` · `/speaking/` · `/work/[slug]/` · 404 |
+| `src/pages/` | Home · `/working/` · `/speaking/` · `/work/[slug]/` · `/design-system/` · 404 |
 | `src/layouts/BaseLayout.astro` | Shell: SEO head, **theme script Part A (pre-paint)** + Part B, base-path-aware `@font-face`. |
 | `public/fonts/` | The six self-hosted woff2 files (RHD 400/500/700 · SS4 400/600/400i). ✔ already included. |
 | `.github/workflows/deploy.yml` | Build + deploy on push to `main`. |
@@ -48,6 +48,8 @@ Everything the site renders inherits one small, opinionated system — **Design 
 | `typography.css` | families, weights, fluid scale, `--measure-article` (680px) |
 | `spacing.css` | fixed 4/8 space scale, radius, motion |
 | `base.css` · `article.css` | page resets · the readable `.article-body` scope (Markdown needs zero classes) |
+
+**Self-documented at `/design-system/`.** The page (`src/pages/design-system.astro`, linked from the footer) is a living reference: specimens render through the real components and `var(--*)` tokens, and the token tables + each component's `Props` contract are **extracted from source at build time** (`?raw` imports of `src/styles/tokens/*` and `src/components/*.astro`). Edit a token or a prop → rebuild → the page updates itself; the only hand-written parts are the sample copy and the authoring-rules summary.
 
 **Synced to Claude Design.** The token + style layer is also published to [claude.ai/design](https://claude.ai/design) as a standalone *"Blogfolio Tokens & Styles"* design system, so its design agent builds on-brand with the real tokens and fonts. Sync inputs live in **`.design-sync/`** (`config.json`, `NOTES.md`); re-run via the `/design-sync` skill. Note: the `.astro` components are compile-time HTML, not runtime React, so only tokens/styles are synced — not the components.
 

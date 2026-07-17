@@ -4,7 +4,7 @@ description: "From paper appraisals to a low-code platform with ML-driven proper
 date: 2024-03-03
 type: Case Study
 tags: [Product management, Real estate]
-featured: true
+featured: false
 dropcap: true
 related: true
 layout: default

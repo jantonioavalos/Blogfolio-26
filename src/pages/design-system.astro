@@ -1,0 +1,800 @@
+---
+// DESIGN SYSTEM — self-documented reference at /design-system/.
+// Two mechanisms keep it honest:
+//   1. Live rendering — every swatch/specimen resolves through the same
+//      var(--*) tokens and real components the site uses. Edit a token,
+//      this page changes with the site.
+//   2. Build-time extraction — token tables and Props contracts are parsed
+//      from src/styles/tokens/* and src/components/*.astro via ?raw imports.
+//      Add a token or a prop → it appears here without touching this file.
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SiteHeader from '../components/SiteHeader.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import Hero from '../components/Hero.astro';
+import Eyebrow from '../components/Eyebrow.astro';
+import Toc from '../components/Toc.astro';
+import Btn from '../components/Btn.astro';
+import TextLink from '../components/TextLink.astro';
+import TagChip from '../components/TagChip.astro';
+import Stat from '../components/Stat.astro';
+import MetaLine from '../components/MetaLine.astro';
+import ThemeSwitch from '../components/ThemeSwitch.astro';
+import LinkSlots from '../components/LinkSlots.astro';
+import OutcomeBox from '../components/OutcomeBox.astro';
+import NextCaseCard from '../components/NextCaseCard.astro';
+import BottomLinks from '../components/BottomLinks.astro';
+import MetricsRow from '../components/MetricsRow.astro';
+import WideCard from '../components/WideCard.astro';
+import ContentCard from '../components/ContentCard.astro';
+import PromoCard from '../components/PromoCard.astro';
+import SectionSneakpeak from '../components/SectionSneakpeak.astro';
+import SectionsRail from '../components/SectionsRail.astro';
+import RelatedPosts from '../components/RelatedPosts.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { SITE, METRICS, PROMOS, RAIL } from '../config/site';
+
+// ── raw sources: the extraction inputs ──
+import colorsSrc from '../styles/tokens/colors.scss?raw';
+import typographySrc from '../styles/tokens/typography.css?raw';
+import spacingSrc from '../styles/tokens/spacing.css?raw';
+const componentSrc = import.meta.glob('../components/*.astro', {
+  query: '?raw',
+  import: 'default',
+  eager: true,
+}) as Record<string, string>;
+
+// ── token parsing ──
+type Token = { name: string; value: string; comment?: string };
+const grab = (src: string, re: RegExp) => src.match(re)?.[1] ?? '';
+function parseTokens(block: string): Token[] {
+  const out: Token[] = [];
+  const re = /--([\w-]+):\s*([^;]+);[ \t]*(?:\/\*\s*([\s\S]*?)\s*\*\/)?/g;
+  let m;
+  while ((m = re.exec(block))) {
+    out.push({
+      name: m[1],
+      value: m[2].trim().replace(/\s+/g, ' '),
+      comment: m[3]?.replace(/\s+/g, ' '),
+    });
+  }
+  return out;
+}
+
+const lightTokens = parseTokens(grab(colorsSrc, /\n:root \{([\s\S]*?)\n\}/));
+const sepiaMap = Object.fromEntries(
+  parseTokens(grab(colorsSrc, /\[data-theme="sepia"\] \{([\s\S]*?)\n\}/)).map((t) => [t.name, t.value]),
+);
+const darkMap = Object.fromEntries(
+  parseTokens(grab(colorsSrc, /@mixin dark-tokens \{([\s\S]*?)\n\}/)).map((t) => [t.name, t.value]),
+);
+const colorRows = lightTokens.map((t) => ({ ...t, sepia: sepiaMap[t.name], dark: darkMap[t.name] }));
+const swatchKind = (name: string) =>
+  name.startsWith('shadow-') ? 'shadow' : name.startsWith('mask-') ? 'mask' : 'color';
+
+const typoTokens = parseTokens(grab(typographySrc, /:root \{([\s\S]*?)\n\}/));
+const typeScale = typoTokens.filter((t) => t.name.startsWith('text-'));
+const typeOther = typoTokens.filter((t) => !t.name.startsWith('text-'));
+const serifScale = new Set(['text-article-h1', 'text-body-article', 'text-blockquote']);
+
+const spaceTokens = parseTokens(grab(spacingSrc, /:root \{([\s\S]*?)\n\}/));
+const spaces = spaceTokens.filter((t) => t.name.startsWith('space-'));
+const layoutTokens = spaceTokens.filter((t) => t.name === 'gutter-page' || t.name === 'max-page');
+const radii = spaceTokens.filter((t) => t.name.startsWith('radius-'));
+const motion = spaceTokens.filter((t) => t.name === 'ease' || t.name.startsWith('dur-'));
+
+// ── component contract extraction ──
+function componentDoc(name: string) {
+  const src = componentSrc[`../components/${name}.astro`] ?? '';
+  const lines = src.split('\n');
+  const descLines: string[] = [];
+  for (let i = 1; i < lines.length; i++) {
+    const l = lines[i].trim();
+    if (l.startsWith('//')) descLines.push(l.replace(/^\/\/\s?/, ''));
+    else break;
+  }
+  const desc = descLines.join(' ');
+  let props = '';
+  const start = src.indexOf('interface Props');
+  if (start !== -1) {
+    const open = src.indexOf('{', start);
+    let depth = 0;
+    for (let i = open; i < src.length; i++) {
+      if (src[i] === '{') depth++;
+      else if (src[i] === '}') {
+        depth--;
+        if (depth === 0) { props = src.slice(start, i + 1); break; }
+      }
+    }
+  }
+  return { desc, props: props || '(no props — renders from slot / site config)' };
+}
+const D = (n: string) => componentDoc(n);
+
+const TOC = [
+  { id: 'principles', label: 'Principles' },
+  { id: 'color', label: 'Color tokens' },
+  { id: 'typography', label: 'Typography' },
+  { id: 'spacing', label: 'Spacing · radius · motion' },
+  { id: 'wayfinding', label: 'Wayfinding' },
+  { id: 'article', label: 'Article scope' },
+  { id: 'components', label: 'Components' },
+  { id: 'authoring', label: 'Content authoring' },
+];
+
+const sampleOutcomes = [
+  { value: '−63%', caption: 'time to price an asset' },
+  { value: '+18%', caption: 'margin on new listings' },
+];
+const sampleLinks = {
+  writeup: '/working/',
+  live: 'https://example.com',
+  figma: 'https://figma.com/',
+  repo: 'https://github.com/',
+};
+const sampleCards = [
+  { title: 'Building a second brain system', tag: 'Knowledge', description: 'A personal knowledge pipeline that survives busy weeks.', meta: ['Case study', '4 min'], href: '/working/' },
+  { title: 'Design systems as products', tag: 'Design systems', description: 'Treating tokens, docs and adoption as a roadmap.', meta: ['Talk', '2025'], href: '/speaking/' },
+  { title: 'Evergreen content, explained', tag: 'Writing', description: 'Notes that compound instead of expire.', meta: ['Note'], href: '/working/' },
+];
+
+const fmSample = `---
+title: "My case study"
+description: "One-line teaser used on cards."
+date: 2026-07-01
+type: Case Study        # or Blog (same collection)
+tags: [Data]
+featured: false          # true = image-variant lead card on /working/
+cover: /covers/x.jpg     # public/covers/ · path WITHOUT the base
+dropcap: true            # opt-in ::first-letter flourish
+related: true            # show "More like this"
+draft: false             # true = not built at all
+private: false           # true = hidden from lists, page still builds
+outcomes:
+  - { value: "−63%", caption: "time to price an asset" }
+links: { figma: "https://…", board: "https://…" }
+---`;
+---
+<BaseLayout
+  title="Design System — Antonio Ávalos"
+  description="Design System v1.1, documented by itself: live tokens, type, spacing, wayfinding and all 23 components — extracted from source at build time."
+>
+  <div id="top">
+    <SiteHeader />
+    <Hero
+      tight
+      kicker="Design System v1.1"
+      title="One system, documented by itself."
+      accentWord="itself"
+      subtitle="Every swatch, specimen and props contract below is rendered from the live tokens in src/styles/tokens/ and the real components in src/components/. Change the source, rebuild — this page follows."
+    />
+
+    <div class="ds">
+      <aside class="rail"><Toc items={TOC} /></aside>
+
+      <main class="doc">
+        <!-- ═══ PRINCIPLES ═══ -->
+        <section id="principles">
+          <Eyebrow tick>Foundations</Eyebrow>
+          <h2 class="sec">Principles</h2>
+          <ul class="rules">
+            <li><strong>Tokens are the source of truth.</strong> Components never hard-code values — everything resolves through <code>var(--*)</code>. This page is proof: it reads the same variables.</li>
+            <li><strong>Brand duo.</strong> Azul <code>--brand</code> carries headlines, buttons and brand surfaces; cherry <code>--accent</code> is a <em>display</em> accent only — hover fills, dropcap, the ∙ ∙ ∙ divider, the one solid CTA per page.</li>
+            <li><strong>Two families, four weights.</strong> Red Hat Display (UI, headings, cards) and Source Serif 4 (display H1, article body, quotes). Self-hosted woff2, nothing from a CDN.</li>
+            <li><strong>Three schemes, one markup.</strong> Light, Sepia and Dark re-assign the <em>same</em> semantic token names — try the switch in the header and watch every specimen on this page re-skin itself.</li>
+            <li><strong>Wayfinding is color.</strong> Azul → stays on site; cherry ⧉ leaves it. Never mixed.</li>
+            <li><strong>Zero runtime JS</strong> except the sanctioned ~10-line theme script in the layout.</li>
+          </ul>
+        </section>
+
+        <!-- ═══ COLOR ═══ -->
+        <section id="color">
+          <Eyebrow tick>Tokens</Eyebrow>
+          <h2 class="sec">Color tokens</h2>
+          <p class="lede">
+            Parsed at build time from <code>src/styles/tokens/colors.scss</code> — {colorRows.length} semantic tokens across three schemes.
+            The <strong>live</strong> swatch follows the scheme you have active right now; the three value columns are the literal source values. “↑ light” means the scheme inherits the light value.
+          </p>
+          <div class="tscroll">
+            <table class="tokens">
+              <thead>
+                <tr><th>token · live</th><th>light</th><th>sepia</th><th>dark</th><th>role</th></tr>
+              </thead>
+              <tbody>
+                {colorRows.map((t) => (
+                  <tr>
+                    <td class="tok">
+                      {swatchKind(t.name) === 'shadow'
+                        ? <span class="sw shadow" style={`box-shadow:var(--${t.name})`}></span>
+                        : <span class="sw" style={`background:var(--${t.name})`}></span>}
+                      <code>--{t.name}</code>
+                    </td>
+                    <td><code>{t.value}</code></td>
+                    <td><code>{t.sepia ?? '↑ light'}</code></td>
+                    <td><code>{t.dark ?? '↑ light'}</code></td>
+                    <td class="role">{t.comment ?? ''}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- ═══ TYPOGRAPHY ═══ -->
+        <section id="typography">
+          <Eyebrow tick>Tokens</Eyebrow>
+          <h2 class="sec">Typography</h2>
+          <p class="lede">Parsed from <code>src/styles/tokens/typography.css</code>. Two families, four weights total.</p>
+
+          <div class="fam">
+            <div class="fam-name"><code>--font-sans</code> · Red Hat Display</div>
+            <p class="fs" style="font-weight:400">Regular 400 — Turning messy operations into measurable products.</p>
+            <p class="fs" style="font-weight:500">Medium 500 — nav items only.</p>
+            <p class="fs" style="font-weight:700">Bold 700 — sans headings, stats.</p>
+          </div>
+          <div class="fam serif">
+            <div class="fam-name"><code>--font-serif</code> · Source Serif 4</div>
+            <p class="fs" style="font-weight:400">Regular 400 — the article body reads in serif at a 680px measure.</p>
+            <p class="fs" style="font-weight:600">Semibold 600 — serif article H1 and the dropcap.</p>
+            <p class="fs" style="font-style:italic">Italic 400 — pull-quotes and the single accent word.</p>
+          </div>
+
+          <h3 class="sub-h">Scale</h3>
+          <div class="scale">
+            {typeScale.map((t) => (
+              <div class="type-row">
+                <div class="type-meta">
+                  <code>--{t.name}</code>
+                  <span class="val">{t.value}</span>
+                  {t.comment && <span class="note">{t.comment}</span>}
+                </div>
+                <div
+                  class:list={['type-sample', { serif: serifScale.has(t.name) }]}
+                  style={`font-size:var(--${t.name})`}
+                >Measurable things</div>
+              </div>
+            ))}
+          </div>
+
+          <h3 class="sub-h">Weights &amp; measure</h3>
+          <div class="tscroll">
+            <table class="tokens">
+              <thead><tr><th>token</th><th>value</th><th>role</th></tr></thead>
+              <tbody>
+                {typeOther.map((t) => (
+                  <tr>
+                    <td><code>--{t.name}</code></td>
+                    <td><code>{t.value}</code></td>
+                    <td class="role">{t.comment ?? ''}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- ═══ SPACING · RADIUS · MOTION ═══ -->
+        <section id="spacing">
+          <Eyebrow tick>Tokens</Eyebrow>
+          <h2 class="sec">Spacing · radius · motion</h2>
+          <p class="lede">Parsed from <code>src/styles/tokens/spacing.css</code> — a fixed 4/8 scale, calm radii, two durations.</p>
+
+          <h3 class="sub-h">Space scale</h3>
+          <div class="spaces">
+            {spaces.map((t) => (
+              <div class="srow">
+                <code>--{t.name}</code>
+                <span class="bar" style={`width:var(--${t.name})`}></span>
+                <span class="val">{t.value}</span>
+              </div>
+            ))}
+            {layoutTokens.map((t) => (
+              <div class="srow">
+                <code>--{t.name}</code>
+                <span class="bar layout"></span>
+                <span class="val">{t.value}{t.comment ? ` — ${t.comment}` : ''}</span>
+              </div>
+            ))}
+          </div>
+
+          <h3 class="sub-h">Radius</h3>
+          <div class="radii">
+            {radii.map((t) => (
+              <div class="rad">
+                <div class="rbox" style={`border-radius:var(--${t.name})`}></div>
+                <code>--{t.name}</code>
+                <span class="val">{t.value}{t.comment ? ` · ${t.comment}` : ''}</span>
+              </div>
+            ))}
+          </div>
+
+          <h3 class="sub-h">Motion</h3>
+          <div class="tscroll">
+            <table class="tokens">
+              <thead><tr><th>token</th><th>value</th><th>role</th></tr></thead>
+              <tbody>
+                {motion.map((t) => (
+                  <tr>
+                    <td><code>--{t.name}</code></td>
+                    <td><code>{t.value}</code></td>
+                    <td class="role">{t.comment ?? ''}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <div class="lift-demo">Hover me — the card model: translateY(−4px) + <code>--shadow-card-hover</code> over <code>--dur-lift</code>. Guarded by <code>prefers-reduced-motion</code>.</div>
+        </section>
+
+        <!-- ═══ WAYFINDING ═══ -->
+        <section id="wayfinding">
+          <Eyebrow tick>Rules</Eyebrow>
+          <h2 class="sec">Wayfinding</h2>
+          <p class="lede">The color <em>is</em> the navigation model: azul → stays on this site, cherry ⧉ leaves it. Hard-coded in <code>TextLink</code>, <code>Btn</code>, <code>LinkSlots</code> and the cards — never mixed, never re-styled per page.</p>
+          <div class="specimen way">
+            <div>
+              <div class="way-label">Internal — azul, arrow</div>
+              <TextLink href="/working/" underline>Read the case →</TextLink>
+            </div>
+            <div>
+              <div class="way-label">External — cherry, ⧉ appended by the component</div>
+              <TextLink href="https://figma.com/" external>Open in Figma</TextLink>
+            </div>
+          </div>
+        </section>
+
+        <!-- ═══ ARTICLE SCOPE ═══ -->
+        <section id="article">
+          <Eyebrow tick>Scope</Eyebrow>
+          <h2 class="sec">Article scope</h2>
+          <p class="lede">
+            The readable scope from <code>src/styles/tokens/article.css</code>: element-styled, so Markdown out of Obsidian needs <strong>zero classes</strong>.
+            Everything below is plain HTML inside <code>.article-body</code> (dropcap opts in via <code>.has-dropcap</code> on the root).
+          </p>
+          <div class="specimen has-dropcap">
+            <div class="article-body">
+              <p>Writing starts with a dropcap when the article opts in. Body copy is Source Serif 4 at a 680px measure, with <a href="#article">internal links underlined in azul</a> and the brand <mark>highlighter for marked phrases</mark> — the same tint the text selection uses.</p>
+              <h2>Headings feed the TOC</h2>
+              <p>Every <code>##</code> heading renders sans-bold in azul and lands in the sticky table of contents automatically.</p>
+              <blockquote><p>Blockquotes render as the oversized serif pull-quote.</p></blockquote>
+              <p>A horizontal rule becomes the cherry divider:</p>
+              <hr />
+              <p>And that is the whole contract — paragraphs, headings, quotes, marks, rules.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- ═══ COMPONENTS ═══ -->
+        <section id="components">
+          <Eyebrow tick>Library</Eyebrow>
+          <h2 class="sec">Components</h2>
+          <p class="lede">
+            All 23 components in <code>src/components/</code>, rendered live with sample props.
+            Each description and <code>Props</code> contract is extracted from the component's own source at build time — they cannot drift.
+          </p>
+
+          <h3 class="grp">Atoms</h3>
+
+          <article class="entry" id="c-btn">
+            <h4>Btn</h4>
+            <p class="cdesc">{D('Btn').desc}</p>
+            <div class="specimen row">
+              <Btn href="/working/">Solid</Btn>
+              <Btn variant="ghost" href="/working/">Ghost</Btn>
+              <Btn variant="accent" external href={SITE.linkedin}>Accent</Btn>
+              <Btn small href="/working/">Small</Btn>
+            </div>
+            <pre class="props"><code>{D('Btn').props}</code></pre>
+          </article>
+
+          <article class="entry" id="c-textlink">
+            <h4>TextLink</h4>
+            <p class="cdesc">{D('TextLink').desc}</p>
+            <div class="specimen row">
+              <TextLink href="/working/">Internal</TextLink>
+              <TextLink href="/working/" underline>Internal, underlined</TextLink>
+              <TextLink href="https://figma.com/" external>External</TextLink>
+            </div>
+            <pre class="props"><code>{D('TextLink').props}</code></pre>
+          </article>
+
+          <article class="entry" id="c-tagchip">
+            <h4>TagChip</h4>
+            <p class="cdesc">{D('TagChip').desc}</p>
+            <div class="specimen row">
+              <TagChip>Data</TagChip>
+              <TagChip>Design systems</TagChip>
+              <span class="on-image-tile"><TagChip onImage>onImage</TagChip></span>
+            </div>
+            <pre class="props"><code>{D('TagChip').props}</code></pre>
+          </article>
+
+          <article class="entry" id="c-eyebrow">
+            <h4>Eyebrow</h4>
+            <p class="cdesc">{D('Eyebrow').desc}</p>
+            <div class="specimen row">
+              <Eyebrow>Selected work</Eyebrow>
+              <Eyebrow tick>With tick</Eyebrow>
+              <span class="on-brand-tile"><Eyebrow onBrand>On brand</Eyebrow></span>
+            </div>
+            <pre class="props"><code>{D('Eyebrow').props}</code></pre>
+          </article>
+
+          <article class="entry" id="c-stat">
+            <h4>Stat</h4>
+            <p class="cdesc">{D('Stat').desc}</p>
+            <div class="specimen row">
+              <Stat value="−63%" caption="time to price an asset" />
+              <span class="on-brand-tile pad"><Stat value="14k" caption="courses delivered" onBrand rule={false} /></span>
+            </div>
+            <pre class="props"><code>{D('Stat').props}</code></pre>
+          </article>
+
+          <h3 class="grp">Molecules</h3>
+
+          <article class="entry" id="c-linkslots">
+            <h4>LinkSlots</h4>
+            <p class="cdesc">{D('LinkSlots').desc}</p>
+            <div class="specimen">
+              <LinkSlots links={sampleLinks} />
+            </div>
+            <pre class="props"><code>{D('LinkSlots').props}</code></pre>
+          </article>
+
+          <article class="entry" id="c-toc">
+            <h4>Toc</h4>
+            <p class="cdesc">{D('Toc').desc} The sticky rail on this very page is a live instance.</p>
+            <div class="specimen narrow">
+              <Toc items={TOC.slice(0, 4)} />
+            </div>
+            <pre class="props"><code>{D('Toc').props}</code></pre>
+          </article>
+
+          <article class="entry" id="c-metaline">
+            <h4>MetaLine</h4>
+            <p class="cdesc">{D('MetaLine').desc}</p>
+            <div class="specimen">
+              <MetaLine items={['Case Study', 'Jun 2026', '4 min']} coffee />
+            </div>
+            <pre class="props"><code>{D('MetaLine').props}</code></pre>
+          </article>
+
+          <article class="entry" id="c-outcomebox">
+            <h4>OutcomeBox</h4>
+            <p class="cdesc">{D('OutcomeBox').desc}</p>
+            <div class="specimen narrow">
+              <OutcomeBox outcomes={sampleOutcomes} />
+            </div>
+            <pre class="props"><code>{D('OutcomeBox').props}</code></pre>
+          </article>
+
+          <article class="entry" id="c-nextcasecard">
+            <h4>NextCaseCard</h4>
+            <p class="cdesc">{D('NextCaseCard').desc}</p>
+            <div class="specimen narrow">
+              <NextCaseCard title="Browse all case studies" href="/working/" />
+            </div>
+            <pre class="props"><code>{D('NextCaseCard').props}</code></pre>
+          </article>
+
+          <article class="entry" id="c-bottomlinks">
+            <h4>BottomLinks</h4>
+            <p class="cdesc">{D('BottomLinks').desc}</p>
+            <div class="specimen">
+              <BottomLinks backHref="/working/" backLabel="Working" />
+            </div>
+            <pre class="props"><code>{D('BottomLinks').props}</code></pre>
+          </article>
+
+          <article class="entry" id="c-themeswitch">
+            <h4>ThemeSwitch</h4>
+            <p class="cdesc">{D('ThemeSwitch').desc} This instance is live — it drives the whole page, including every specimen above and below.</p>
+            <div class="specimen">
+              <ThemeSwitch />
+            </div>
+            <pre class="props"><code>{D('ThemeSwitch').props}</code></pre>
+          </article>
+
+          <h3 class="grp">Organisms</h3>
+
+          <article class="entry" id="c-siteheader">
+            <h4>SiteHeader</h4>
+            <p class="cdesc">{D('SiteHeader').desc} Also live at the top of this page.</p>
+            <div class="specimen bleed">
+              <SiteHeader />
+            </div>
+            <pre class="props"><code>{D('SiteHeader').props}</code></pre>
+          </article>
+
+          <article class="entry" id="c-sitefooter">
+            <h4>SiteFooter</h4>
+            <p class="cdesc">{D('SiteFooter').desc} Also live at the bottom of this page.</p>
+            <div class="specimen bleed">
+              <SiteFooter />
+            </div>
+            <pre class="props"><code>{D('SiteFooter').props}</code></pre>
+          </article>
+
+          <article class="entry" id="c-widecard">
+            <h4>WideCard</h4>
+            <p class="cdesc">{D('WideCard').desc}</p>
+            <div class="specimen stack">
+              <WideCard
+                size="tall"
+                title="Real estate operations, producing future value insights"
+                description="No cover set — the image panel falls back to the tinted field, never a broken image."
+                tags={['Data', 'Real estate']}
+                href="/working/"
+                links={sampleLinks}
+              />
+              <WideCard
+                imageVariant
+                title="The image-variant lead card"
+                description="Title over the cover with the protection mask; no cover → the brand gradient."
+                tags={['Featured']}
+                href="/working/"
+                links={{ writeup: '/working/' }}
+              />
+            </div>
+            <pre class="props"><code>{D('WideCard').props}</code></pre>
+          </article>
+
+          <article class="entry" id="c-promocard">
+            <h4>PromoCard</h4>
+            <p class="cdesc">{D('PromoCard').desc} Fed here by the real <code>PROMOS.speaking</code> from <code>site.ts</code>.</p>
+            <div class="specimen">
+              <PromoCard {...PROMOS.speaking} />
+            </div>
+            <pre class="props"><code>{D('PromoCard').props}</code></pre>
+          </article>
+
+          <article class="entry" id="c-contentcard">
+            <h4>ContentCard</h4>
+            <p class="cdesc">{D('ContentCard').desc}</p>
+            <div class="specimen grid3">
+              <ContentCard {...sampleCards[0]} coffee />
+              <ContentCard {...sampleCards[1]} chips={{ deck: 'https://figma.com/', video: 'https://youtube.com/' }} />
+            </div>
+            <pre class="props"><code>{D('ContentCard').props}</code></pre>
+          </article>
+
+          <article class="entry" id="c-sectionsneakpeak">
+            <h4>SectionSneakpeak</h4>
+            <p class="cdesc">{D('SectionSneakpeak').desc}</p>
+            <div class="specimen bleed">
+              <SectionSneakpeak
+                title="Working"
+                blurb="Selected case studies — the home-page teaser pattern."
+                href="/working/"
+                items={sampleCards}
+                coffee
+              />
+            </div>
+            <pre class="props"><code>{D('SectionSneakpeak').props}</code></pre>
+          </article>
+
+          <article class="entry" id="c-sectionsrail">
+            <h4>SectionsRail</h4>
+            <p class="cdesc">{D('SectionsRail').desc} Fed here by the real <code>RAIL</code> config.</p>
+            <div class="specimen bleed">
+              <SectionsRail label={RAIL.label} items={[...RAIL.items]} />
+            </div>
+            <pre class="props"><code>{D('SectionsRail').props}</code></pre>
+          </article>
+
+          <article class="entry" id="c-relatedposts">
+            <h4>RelatedPosts</h4>
+            <p class="cdesc">{D('RelatedPosts').desc}</p>
+            <div class="specimen">
+              <RelatedPosts items={[
+                { title: sampleCards[0].title, href: '/working/', meta: ['Case study', '4 min'] },
+                { title: sampleCards[2].title, href: '/working/', meta: ['Note'] },
+              ]} />
+            </div>
+            <pre class="props"><code>{D('RelatedPosts').props}</code></pre>
+          </article>
+
+          <article class="entry" id="c-hero">
+            <h4>Hero</h4>
+            <p class="cdesc">{D('Hero').desc} Also live at the top of this page (tight variant).</p>
+            <div class="specimen bleed">
+              <Hero
+                tight
+                kicker="Hi, I'm Antonio"
+                title="Turning messy operations into measurable products."
+                accentWord="measurable"
+                subtitle="One serif-italic accent word max — the A6 rule, enforced by the component."
+              />
+            </div>
+            <pre class="props"><code>{D('Hero').props}</code></pre>
+          </article>
+
+          <article class="entry" id="c-metricsrow">
+            <h4>MetricsRow</h4>
+            <p class="cdesc">{D('MetricsRow').desc} Fed here by the real <code>METRICS</code> from <code>site.ts</code>.</p>
+            <div class="specimen">
+              <MetricsRow stats={[...METRICS]} />
+            </div>
+            <pre class="props"><code>{D('MetricsRow').props}</code></pre>
+          </article>
+
+          <article class="entry" id="c-ctaband">
+            <h4>CtaBand</h4>
+            <p class="cdesc">{D('CtaBand').desc}</p>
+            <div class="specimen bleed">
+              <CtaBand
+                title="Let's build something measurable."
+                accentWord="measurable"
+                linkedinHref={SITE.linkedin}
+                emailHref={SITE.email}
+              />
+            </div>
+            <pre class="props"><code>{D('CtaBand').props}</code></pre>
+          </article>
+        </section>
+
+        <!-- ═══ CONTENT AUTHORING ═══ -->
+        <section id="authoring">
+          <Eyebrow tick>Writing</Eyebrow>
+          <h2 class="sec">Content authoring</h2>
+          <p class="lede">
+            How content enters the system: Obsidian writes Markdown into <code>content/work/</code>, the schema in <code>src/content.config.ts</code> validates it, the build renders it through the article scope above.
+            Full field-by-field reference: <code>docs/content-reference.md</code> in the repo.
+          </p>
+
+          <pre class="props fm"><code>{fmSample}</code></pre>
+
+          <div class="tscroll">
+            <table class="tokens">
+              <thead><tr><th>rule</th><th>what it means</th></tr></thead>
+              <tbody>
+                <tr>
+                  <td><code>cover</code> paths</td>
+                  <td class="role">Files live in <code>public/covers/</code>; write the path <strong>without</strong> the Pages base (<code>/covers/x.jpg</code>). Components add the base — writing it yourself double-prefixes and 404s.</td>
+                </tr>
+                <tr>
+                  <td><code>draft: true</code></td>
+                  <td class="role">Out of every list <strong>and the page is not built at all</strong>.</td>
+                </tr>
+                <tr>
+                  <td><code>private: true</code></td>
+                  <td class="role">Out of every list, but the page still builds — share the URL privately.</td>
+                </tr>
+                <tr>
+                  <td>No cover?</td>
+                  <td class="role">Cards fall back to the typographic tile — never a broken image.</td>
+                </tr>
+                <tr>
+                  <td>Markdown extras</td>
+                  <td class="role"><code>##</code> feeds the TOC · <code>&gt;</code> becomes the pull-quote · <code>==text==</code> highlights · <code>---</code> becomes the ∙ ∙ ∙ divider · read time (☕) is computed at build.</td>
+                </tr>
+                <tr>
+                  <td>Dormant fields</td>
+                  <td class="role"><code>layout</code> and <code>extlink</code> are in the schema but read by no code yet; <code>links</code> renders on /working/ cards only; <code>type: Blog</code> builds a page but no list shows Blog posts yet.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <SiteFooter />
+  </div>
+</BaseLayout>
+
+<style lang="scss">
+  .ds {
+    display: grid; grid-template-columns: 230px minmax(0, 1fr); gap: 36px;
+    align-items: start; padding: 18px var(--gutter-page) 48px;
+  }
+  .rail { position: sticky; top: 20px; }
+  @media (max-width: 900px) {
+    .ds { grid-template-columns: 1fr; }
+    .rail { position: static; }
+  }
+
+  .doc section { margin-bottom: 64px; scroll-margin-top: 20px; }
+  .sec {
+    font-family: var(--font-sans); font-weight: var(--weight-bold);
+    font-size: var(--text-section); color: var(--text-heading); margin: 8px 0 10px;
+  }
+  .lede { font-size: var(--text-ui); line-height: 1.6; color: var(--text-secondary); max-width: 720px; margin: 0 0 22px; }
+  .sub-h {
+    font-family: var(--font-sans); font-weight: var(--weight-bold); font-size: 17px;
+    color: var(--text-heading); margin: 30px 0 12px;
+  }
+  code { font-size: 0.92em; }
+
+  .rules { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 10px;
+    li { font-size: var(--text-ui); line-height: 1.6; color: var(--text-secondary);
+      strong { color: var(--text-heading); } } }
+
+  /* token tables */
+  .tscroll { overflow-x: auto; }
+  .tokens {
+    width: 100%; border-collapse: collapse; font-size: var(--text-ui-sm);
+    th { text-align: left; font-size: var(--text-eyebrow); letter-spacing: .1em; text-transform: uppercase;
+      color: var(--brand-soft); font-weight: 600; padding: 8px 14px 8px 0; border-bottom: 1px solid var(--border); }
+    td { padding: 9px 14px 9px 0; border-bottom: 1px solid var(--border-hairline); vertical-align: top;
+      color: var(--text-secondary); white-space: nowrap; }
+    td.role { white-space: normal; min-width: 200px; color: var(--text-meta); }
+    td.tok { display: flex; align-items: center; gap: 10px; }
+  }
+  .sw {
+    width: 26px; height: 26px; flex: none; border-radius: 7px;
+    border: 1px solid var(--border); display: inline-block;
+    &.shadow { background: var(--surface-card); }
+  }
+
+  /* typography */
+  .fam { margin: 0 0 18px; padding: 18px 20px; background: var(--surface-1); border-radius: var(--radius-card);
+    .fam-name { font-size: var(--text-ui-sm); color: var(--brand-soft); font-weight: 600; margin-bottom: 10px; }
+    .fs { margin: 4px 0; font-size: 19px; color: var(--ink); }
+    &.serif .fs { font-family: var(--font-serif); } }
+  .scale { display: flex; flex-direction: column; gap: 16px; }
+  .type-row { border-bottom: 1px solid var(--border-hairline); padding-bottom: 14px;
+    .type-meta { display: flex; flex-wrap: wrap; gap: 12px; align-items: baseline; margin-bottom: 6px;
+      font-size: var(--text-meta-size); color: var(--text-meta);
+      code { color: var(--brand-soft); }
+      .note { font-style: italic; } }
+    .type-sample { font-family: var(--font-sans); font-weight: var(--weight-bold);
+      line-height: 1.15; color: var(--text-heading); overflow-wrap: anywhere;
+      &.serif { font-family: var(--font-serif); font-weight: var(--weight-regular); color: var(--ink); } } }
+
+  /* spacing */
+  .spaces { display: flex; flex-direction: column; gap: 8px;
+    .srow { display: flex; align-items: center; gap: 14px; font-size: var(--text-ui-sm); color: var(--text-secondary);
+      code { min-width: 130px; color: var(--brand-soft); }
+      .bar { height: 14px; background: var(--brand); border-radius: 3px; flex: none;
+        &.layout { width: 64px; background: var(--brand-tint); } }
+      .val { color: var(--text-meta); font-size: var(--text-meta-size); } } }
+  .radii { display: flex; flex-wrap: wrap; gap: 22px;
+    .rad { display: flex; flex-direction: column; gap: 6px; font-size: var(--text-meta-size); color: var(--text-meta);
+      code { color: var(--brand-soft); }
+      .rbox { width: 84px; height: 64px; background: var(--surface-2); border: 1.5px solid var(--brand-tint); } } }
+  .lift-demo {
+    margin-top: 18px; padding: 20px 24px; max-width: 460px;
+    background: var(--surface-card); border: 1px solid var(--border);
+    border-radius: var(--radius-card); box-shadow: var(--shadow-card-sm);
+    font-size: var(--text-ui-sm); line-height: 1.5; color: var(--text-secondary);
+    transition: transform var(--dur-lift) var(--ease), box-shadow var(--dur-lift) var(--ease);
+    &:hover { transform: translateY(-4px); box-shadow: var(--shadow-card-hover); }
+    @media (prefers-reduced-motion: reduce) { &:hover { transform: none; } }
+  }
+
+  /* specimens */
+  .specimen {
+    border: 1px dashed var(--border); border-radius: var(--radius-card);
+    padding: 24px; background: var(--surface-page);
+    &.row { display: flex; flex-wrap: wrap; gap: 18px; align-items: center; }
+    &.stack { display: flex; flex-direction: column; gap: 22px; }
+    &.grid3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; }
+    &.narrow { max-width: 380px; }
+    &.bleed { padding: 0; overflow: hidden; }
+    &.way { display: flex; flex-wrap: wrap; gap: 40px;
+      .way-label { font-size: var(--text-meta-size); color: var(--text-meta); margin-bottom: 8px; } }
+  }
+  .on-brand-tile { display: inline-flex; background: var(--surface-brand); border-radius: var(--radius-chip); padding: 8px 12px;
+    &.pad { padding: 14px 18px; } }
+  .on-image-tile { display: inline-flex; background: linear-gradient(135deg, var(--brand-soft), var(--brand));
+    border-radius: var(--radius-chip); padding: 8px 12px; }
+
+  /* component entries */
+  .grp {
+    font-family: var(--font-sans); font-weight: 600; font-size: var(--text-eyebrow);
+    letter-spacing: .14em; text-transform: uppercase; color: var(--brand-soft);
+    margin: 36px 0 6px; padding-top: 10px; border-top: 1px solid var(--border);
+  }
+  .entry { margin: 0 0 34px; scroll-margin-top: 20px;
+    h4 { font-family: var(--font-sans); font-weight: var(--weight-bold); font-size: 19px;
+      color: var(--text-heading); margin: 18px 0 4px; }
+    .cdesc { font-size: var(--text-ui-sm); line-height: 1.55; color: var(--text-secondary);
+      max-width: 720px; margin: 0 0 12px; } }
+  .props {
+    margin: 10px 0 0; padding: 14px 18px; overflow-x: auto;
+    background: var(--surface-1); border-radius: var(--radius-chip);
+    font-size: 13px; line-height: 1.55; color: var(--text-secondary);
+    code { font-size: inherit; }
+    &.fm { margin-bottom: 22px; }
+  }
+</style>

@@ -4,7 +4,7 @@ description: "From idea to MVP for a corporate online school — 14k course sale
 date: 2024-02-21
 type: Case Study
 tags: [Product management, Online education]
-featured: true
+featured: false
 dropcap: true
 related: true
 layout: default

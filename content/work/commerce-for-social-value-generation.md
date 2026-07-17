@@ -4,7 +4,7 @@ description: "The first e-commerce for a corporation's employees — 16k users a
 date: 2024-02-25
 type: Case Study
 tags: [Product management, E-commerce]
-featured: true
+featured: false
 dropcap: true
 related: true
 layout: default

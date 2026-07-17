@@ -1,1 +1,33 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect width="32" height="32" rx="8" fill="#003063"/><text x="16" y="22" font-family="system-ui,sans-serif" font-size="17" font-weight="700" fill="#fff" text-anchor="middle">A</text></svg>
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 24.3.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 850.39 850.39" style="enable-background:new 0 0 850.39 850.39;" xml:space="preserve">
+<style type="text/css">
+	.st0{fill:#3C3C3B;}
+	.st1{fill:#FFFFFF;}
+	.st2{fill:#E63323;}
+	.st3{fill:#003063;}
+	.st4{fill:none;stroke:#003063;stroke-width:2;stroke-miterlimit:10;}
+	.st5{fill:none;stroke:#E63323;stroke-width:2;stroke-miterlimit:10;}
+	.st6{fill:none;stroke:#3C3C3B;stroke-width:2;stroke-miterlimit:10;}
+	.st7{fill:none;stroke:#FFFFFF;stroke-width:2;stroke-miterlimit:10;}
+</style>
+<g>
+	<circle class="st3" cx="425.2" cy="196.61" r="54.88"/>
+	<g>
+		<g>
+			<g>
+				<path class="st3" d="M563.48,408.83c0,76.37-61.91,138.28-138.28,138.28c-76.37,0-138.28-61.91-138.28-138.28h-46.87
+					L425.2,708.66l185.16-299.84H563.48z"/>
+			</g>
+			<g>
+				<g>
+					<path class="st2" d="M425.2,270.54c-76.37,0-138.28,61.91-138.28,138.28s61.91,138.28,138.28,138.28
+						c76.37,0,138.28-61.91,138.28-138.28S501.57,270.54,425.2,270.54z M425.2,464.74c-30.31,0-54.88-24.57-54.88-54.88
+						c0-30.31,24.57-54.88,54.88-54.88c30.31,0,54.88,24.57,54.88,54.88C480.08,440.17,455.51,464.74,425.2,464.74z"/>
+				</g>
+			</g>
+		</g>
+	</g>
+</g>
+</svg>
