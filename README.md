@@ -29,6 +29,7 @@ Requires Node 18+ (built & verified on Node 22 / Astro 5.18 / sass).
 | `src/styles/tokens/` | **Design System v1.1 — source of truth.** `colors.scss` = 3 schemes (edit here; Astro compiles it, no manual step). |
 | `src/components/` | 23 `.astro` components ported from the DS `*.prompt.md` contracts. All styling via tokens. |
 | `src/pages/` | Home · `/working/` · `/speaking/` · `/work/[slug]/` · `/design-system/` · 404 |
+| `packages/remark-obsidian-media/` | **Workspace package**: Obsidian-compatible image hints (`![alt\|560]`, `\|wide`, `\|right`…) + zero-JS masonry galleries (consecutive image lines, `\|cols-3`). Wired in `astro.config.mjs`; docs in its README. |
 | `src/layouts/BaseLayout.astro` | Shell: SEO head, **theme script Part A (pre-paint)** + Part B, base-path-aware `@font-face`. |
 | `public/fonts/` | The six self-hosted woff2 files (RHD 400/500/700 · SS4 400/600/400i). ✔ already included. |
 | `.github/workflows/deploy.yml` | Build + deploy on push to `main`. |
@@ -79,6 +80,8 @@ Body in plain Markdown. ## headings feed the sticky TOC automatically.
 > Blockquotes render as the oversized serif pull-quote.
 ==highlight== renders with the brand highlighter. `---` = the ∙ ∙ ∙ divider.
 ```
+
+**Images** (via `packages/remark-obsidian-media` — full docs in its README): `![alt|560](…)` sizes an image (Obsidian previews it too); `|wide` `|left` `|right` `|sm/md/lg` are keyword hints; a `"title"` becomes the figcaption; **consecutive image lines** (no blank line) become a masonry gallery — first image's `|cols-3` sets the columns. Plain `![](…)` is untouched. See `content/work/media-lab.md` (`private: true`) for a live specimen page.
 
 3. Save → commit → push. The Action rebuilds and deploys.
 

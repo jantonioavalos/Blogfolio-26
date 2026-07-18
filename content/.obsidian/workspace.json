@@ -11,21 +11,14 @@
             "id": "e7a7b303c61786dc",
             "type": "leaf",
             "state": {
-              "type": "kanban",
+              "type": "markdown",
               "state": {
-                "file": "Kanban.md",
-                "kanbanViewState": {
-                  "kanban-plugin": "board",
-                  "list-collapse": [
-                    false,
-                    false,
-                    false,
-                    false
-                  ]
-                }
+                "file": "work/real-estate-operations-producing-future-value-insights.md",
+                "mode": "source",
+                "source": false
               },
-              "icon": "lucide-trello",
-              "title": "Kanban"
+              "icon": "lucide-file",
+              "title": "real-estate-operations-producing-future-value-insights"
             }
           }
         ]
@@ -210,14 +203,18 @@
       "canvas:Create new canvas": false,
       "templates:Insert template": false,
       "command-palette:Open command palette": false,
-      "bases:Create new base": false,
       "homepage:Open homepage": false,
       "obsidian-kanban:Create new board": false
     }
   },
   "active": "e7a7b303c61786dc",
   "lastOpenFiles": [
+    "work/media-lab.md",
+    "ARCHIVE/working-2.astro",
+    "work/commerce-for-social-value-generation.md",
+    "work/online-education-for-the-digital-transformation.md",
     "work/real-estate-operations-producing-future-value-insights.md",
+    "Kanban.md",
     "attachments/real-estate-operations-producing-future-value-insights-img-16.png",
     "attachments/real-estate-operations-producing-future-value-insights-img-15.png",
     "attachments/real-estate-operations-producing-future-value-insights-img-14.png",
@@ -228,9 +225,6 @@
     "attachments/real-estate-operations-producing-future-value-insights-img-9.jpg",
     "attachments/real-estate-operations-producing-future-value-insights-img-8.png",
     "attachments/real-estate-operations-producing-future-value-insights-img-7.png",
-    "work/online-education-for-the-digital-transformation.md",
-    "work/commerce-for-social-value-generation.md",
-    "Kanban.md",
     "kanban-cards",
     "templates/Kanban GTD.md",
     "Untitled Kanban.md",

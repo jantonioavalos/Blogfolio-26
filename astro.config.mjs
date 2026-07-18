@@ -1,5 +1,6 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
+import remarkObsidianMedia from 'remark-obsidian-media';
 
 // ── GitHub Pages settings — pick ONE scenario ───────────────────
 //  A) PROJECT PAGE  → https://<username>.github.io/<repo>/
@@ -10,4 +11,8 @@ import { defineConfig } from 'astro/config';
 export default defineConfig({
   site: 'https://jantonioavalos.github.io',
   base: '/Blogfolio-26/',
+  markdown: {
+    // Obsidian-compatible image hints + masonry galleries (packages/remark-obsidian-media)
+    remarkPlugins: [remarkObsidianMedia],
+  },
 });

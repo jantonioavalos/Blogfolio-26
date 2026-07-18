@@ -1,0 +1,23 @@
+/* remark-obsidian-media — Obsidian vault snippet (approximate preview parity).
+   Install: copy into <vault>/.obsidian/snippets/ and enable in
+   Settings → Appearance → CSS snippets.
+   Multi-image paragraphs (the plugin's gallery convention) preview as a
+   two-column masonry; numeric |width hints are already honored by Obsidian. */
+
+.markdown-rendered p:has(> img:nth-of-type(2)),
+.markdown-preview-view p:has(> img:nth-of-type(2)) {
+  column-count: 2;
+  column-gap: 12px;
+}
+.markdown-rendered p:has(> img:nth-of-type(2)) > img,
+.markdown-preview-view p:has(> img:nth-of-type(2)) > img {
+  display: block;
+  width: 100%;
+  break-inside: avoid;
+  margin: 0 0 12px;
+  border-radius: 10px;
+}
+.markdown-rendered p:has(> img:nth-of-type(2)) > br,
+.markdown-preview-view p:has(> img:nth-of-type(2)) > br {
+  display: none;
+}
