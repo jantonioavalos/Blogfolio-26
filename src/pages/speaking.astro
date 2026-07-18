@@ -13,7 +13,7 @@ import { TALKS, SITE } from '../config/site';
     <div class="onpage"><SiteHeader current="Speaking" /></div>
     <div class="heropad">
       <Hero tight title="Talks, in two languages." accentWord="two"
-        subtitle="13 sessions on product, design systems and second brains — ES & EN." />
+        subtitle="13 sessions on product management, UX and strategy — ES & EN." />
     </div>
     <div class="invite">
       Want one at your event?
@@ -21,7 +21,7 @@ import { TALKS, SITE } from '../config/site';
     </div>
     <div class="grid">
       {TALKS.map((t) => (
-        <ContentCard type="talk" title={t.title} coverHeight={220} meta={t.meta} chips={t.chips} />
+        <ContentCard type="talk" title={t.title} cover={t.cover} coverHeight={400} meta={t.meta} chips={t.chips} />
       ))}
     </div>
     <div class="onpage"><SiteFooter /></div>
@@ -33,5 +33,7 @@ import { TALKS, SITE } from '../config/site';
   .heropad { max-width: 840px; }
   .invite { padding: 6px var(--gutter-page) 8px; font-size: 18px; color: var(--text-secondary); }
   .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: 24px; padding: 26px var(--gutter-page) 48px; }
+    gap: 24px; padding: 26px var(--gutter-page) 48px;
+    /* event photos: keep heads/slides in frame — crop from the top, not the center */
+    :global(.ccard .cover img) { object-position: top; } }
 </style>

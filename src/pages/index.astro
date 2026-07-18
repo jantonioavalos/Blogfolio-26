@@ -29,6 +29,7 @@ const workingItems = posts.slice(0, 3).map((p) => ({
 
 const speakingItems = TALKS.slice(0, 3).map((t) => ({
   title: t.title, type: 'talk' as const, href: '/speaking/', meta: t.meta,
+  cover: t.cover, chips: t.chips,
 }));
 ---
 <BaseLayout>
@@ -41,7 +42,9 @@ const speakingItems = TALKS.slice(0, 3).map((t) => ({
       subtitle="Working, speaking and mentoring across product, design systems and second brains — in two languages."
     />
     <SectionSneakpeak title="Working" blurb="Case studies with the outcomes up front." href="/working/" items={workingItems} coffee />
-    <SectionSneakpeak title="Speaking" blurb="Recent talks — ES & EN." href="/speaking/" items={speakingItems} />
+    <div class="speak-peek">
+      <SectionSneakpeak title="Speaking" blurb="Recent talks — ES & EN." href="/speaking/" items={speakingItems} />
+    </div>
     <SectionsRail label={RAIL.label} items={RAIL.items} />
     <div class="promos">
       <PromoCard {...PROMOS.mentoring} />
@@ -53,4 +56,6 @@ const speakingItems = TALKS.slice(0, 3).map((t) => ({
 <style lang="scss">
   .promos { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
     gap: 22px; padding: 32px var(--gutter-page) 40px; }
+  /* event photos: same top-anchored crop as the Speaking page grid */
+  .speak-peek :global(.ccard .cover img) { object-position: top; }
 </style>
