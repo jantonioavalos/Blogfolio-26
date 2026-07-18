@@ -3,5 +3,6 @@
   "shape": "custom-tokens-only",
   "pkg": "blogfolio",
   "globalName": "Blogfolio",
+  "readmeHeader": ".design-sync/conventions.md",
   "notes": "Off-script tokens-only sync. This Astro repo has no bundlable React entry, so the ds-bundle/ layout is hand-produced (empty-bodied _ds_bundle.js + styles.css closure + tokens/fonts + foundation preview cards). See .design-sync/NOTES.md."
 }

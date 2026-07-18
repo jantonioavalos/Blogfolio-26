@@ -15,6 +15,10 @@
 - **Blogfolio-26-vAstro** (`02b3c36a-034f-437a-b9f2-60b767768e91`) — a **complete React design system** (22 components + guidelines + tokens) synced by a prior/manual process. Its `.jsx` components have **no source of truth in this repo** (the `design-system/` folder is empty and never tracked in git). Treat that project as the canonical copy of that work. Do NOT let a tokens-only sync reconcile-delete into it.
 - **Blogfolio Tokens & Styles** (`ac203dd7-f010-4058-9b65-dc42268b6c3e`) — THIS sync's target. Tokens/styles/fonts + foundation cards only.
 
+## Conventions
+- `.design-sync/conventions.md` is the canonical conventions file (created 2026-07-17, extracted from the hand-authored bundle README). **Hand-stitch rule:** `ds-bundle/README.md` is that file verbatim — no converter stitches it, so edits to conventions.md must be copied into ds-bundle/README.md (and uploaded) by hand.
+- Validation 2026-07-17: all 59 named `--tokens`, `.article-body`/`.has-dropcap` scopes, `data-theme` selectors (sass strips the quotes: `[data-theme=sepia]`), and every claimed value verify against the built `tokens/*.css`. ✓
+
 ## Re-sync risks
 - No `_ds_sync.json` anchor is produced (off-script tokens-only) — every re-sync re-verifies from scratch. That's correct and safe here.
 - Token source of truth is `src/styles/tokens/` in the Astro repo. `colors.css` must be recompiled from `colors.scss` on any color change.
