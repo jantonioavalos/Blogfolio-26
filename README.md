@@ -23,7 +23,7 @@ Requires Node 18+ (built & verified on Node 22 / Astro 5.18 / sass).
 |---|---|
 | `content/` | **Your Obsidian vault.** Open THIS folder as a vault. `work/*.md` = case studies (and future blog posts). |
 | `docs/content-reference.md` | **Deep reference** for every frontmatter field + how each list selects/counts. The day-to-day companion to this README. |
-| `public/covers/` | Card/hero cover images. `cover:` frontmatter points here (see Writing content). |
+| `public/covers/` | Card/hero cover images, talk event photos (`talk-NN-*`), and promo thumbs. `cover:` frontmatter and the `TALKS`/`PROMOS` image paths in `site.ts` point here (see Writing content). |
 | `src/config/site.ts` | **Site data**: nav verbs, metrics, values, talks, rail items, promos, your LinkedIn/email/garden URLs. Most edits happen here or in `content/`. |
 | `src/content.config.ts` | Content schema (the `type`-field model: Case Study \| Blog, tags, outcomes, links, dropcap, layout…). |
 | `src/styles/tokens/` | **Design System v1.1 — source of truth.** `colors.scss` = 3 schemes (edit here; Astro compiles it, no manual step). |
@@ -100,17 +100,18 @@ Talks live in `src/config/site.ts` (`TALKS`) — they're data, not pages (v1).
 - **Theme script** = the only runtime JS. Part A inline in `<head>` (pre-paint, no flash); Part B wires `[data-set-theme]` buttons + `localStorage`.
 - **Wayfinding is hard-coded**: azul `→` internal, cherry `⧉` external. Never mix.
 - **Fonts**: `@font-face` is generated in `BaseLayout` (not a static css) so URLs respect the Pages `base`. `font-display: swap`, 2 families / 4 weights.
-- **Cards**: whole-card stretched links with z-indexed secondary links; missing covers fall back to the typographic tile — never broken images.
+- **Cards**: whole-card stretched links with z-indexed secondary links; missing covers fall back to the typographic tile — never broken images. Talk-card event photos crop from the **top** (`object-position: top`), scoped in `speaking.astro` and the home speaking peek.
 - **Read time** (☕) is computed at build (~200 wpm). TOC comes from real `##` headings.
 - **NextCase** = next item in the collection (wraps around). **RelatedPosts** = shared-tag matches, opt-out with `related: false`.
 - **`layout` frontmatter** (6 post-header variants) is declared in the schema but **not read by any code yet** — setting it is a no-op today. See Developer notes for how to wire it.
 
 ## Known placeholders (swap when ready)
 
-- `src/config/site.ts`: real LinkedIn / email / ADPList URLs.
-- Isotipo: the "A" square in header/hero/favicon awaits your real SVG lockup.
-- Case-study bodies in `content/work/` are design-data placeholders; covers absent → typographic tiles by design.
-- Talk deck/video chip URLs point at figma.com/youtube.com placeholders.
+- Isotipo: the "A" square in header/hero awaits your real SVG lockup (favicon is already the real one).
+- `RAIL` in `site.ts` is stale curation: "Building a second brain system" points at an archived case study (404s) and "Knowledge management for teams" was a placeholder talk that no longer exists — re-curate the four items.
+- Garden note URLs in `RAIL` (`/12-favorite-problems`) are unverified against the live garden.
+
+Now real (imported from the old site): the 13 `TALKS` with event photos + deck/video links, `PROMOS` images, LinkedIn / email / ADPList URLs, metrics, values, and the three case studies in `content/work/`.
 
 ## Developer notes and disclaimers
 

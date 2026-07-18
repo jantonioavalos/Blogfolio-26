@@ -1,5 +1,6 @@
 ---
 // O3-short promo (Mentoring / Thinking / Speaking rows on Home & Working).
+// Optional image fills the thumb (base-prefixed); absent → tinted placeholder.
 interface Props { title: string; text: string; linkLabel: string; href: string; external?: boolean; image?: string }
 const { title, text, linkLabel, href, external = false, image } = Astro.props;
 const base = import.meta.env.BASE_URL;

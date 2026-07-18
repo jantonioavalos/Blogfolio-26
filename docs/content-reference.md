@@ -77,12 +77,21 @@ Three data sources feed the site:
 - **`posts`** = Markdown in `content/work/` (case studies)
 - **`TALKS`, `RAIL`, `PROMOS`** = hardcoded arrays in [`src/config/site.ts`](../src/config/site.ts)
 
+Config shapes (paths always written **without** the base — components add it):
+```ts
+Talk   = { title, meta: [venue, city, year, lang],   // meta entries are free-form; omit what you don't have
+           cover?: '/covers/talk-NN-….png',          // event photo → card image on /speaking/ + home peek
+           chips?: { deck?: url, video?: url } }     // external cherry chips on the card
+PROMOS.* = { title, text, linkLabel, href, external,
+             image?: '/covers/….png' }               // fills the PromoCard thumb; omitted → tinted placeholder
+```
+
 ### 🏠 Home — [`src/pages/index.astro`](../src/pages/index.astro)
 
 | Block | Source | Count | Selection logic |
 |---|---|---|---|
 | Working sneak-peek | `posts` | **3** | `posts.slice(0, 3)` → **newest 3 case studies** |
-| Speaking sneak-peek | `TALKS` | **3** | `TALKS.slice(0, 3)` → first 3 in config order |
+| Speaking sneak-peek | `TALKS` | **3** | `TALKS.slice(0, 3)` → first 3 in config order, with `cover` + `chips` passed through |
 | SectionsRail | `RAIL.items` | all (4) | manual curation in config |
 | Promos | `PROMOS` | 2 | hardcoded: `mentoring`, `thinking` |
 
@@ -109,7 +118,7 @@ Three data sources feed the site:
 
 | Block | Source | Count | Selection logic |
 |---|---|---|---|
-| Talk grid | `TALKS` | **all** | `TALKS.map(...)` — every talk, config order |
+| Talk grid | `TALKS` | **all** | `TALKS.map(...)` — every talk, config order. Event photos at `coverHeight` 400, cropped from the top |
 
 ### 📄 Case study post — [`src/pages/work/[...slug].astro`](../src/pages/work/[...slug].astro)
 
